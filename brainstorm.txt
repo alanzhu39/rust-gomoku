@@ -1,0 +1,71 @@
+Objects:
+
+Game
+field: id
+field: player1
+field: player2
+field: board
+field: moves sequence
+field: winner
+- init:
+	blank fields
+- create:
+	assign player1
+- join:
+	assign player2
+	start game
+- start:
+	init board
+	start game
+- make move:
+	place piece on board
+	update moves sequence
+	check win condition
+- private check win:
+	run algorithm on board pieces
+
+
+
+Board
+field: id
+field: grid of pieces
+- init: blank board
+- place piece: update grid cell
+
+
+
+Player
+field: id
+field: username
+field: password (if present)
+
+
+
+APIs:
+- create game (username)
+	create player w/ username
+	create game
+	send invite link
+	websocket connection
+- join game (username)
+	create player w/ username
+	join game
+	websocket connection
+
+
+
+Flows:
+- game creation
+	select username (or choose default)
+	select side
+	create game (username)
+- game join
+	navigate to invite link
+	select username
+	join game
+- make move
+	click board
+	send move via websocket
+	server pushes next move to both players (move, win, draw, etc.)
+
+
