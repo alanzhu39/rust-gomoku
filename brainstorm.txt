@@ -6,7 +6,7 @@ field: player1
 field: player2
 field: board
 field: moves sequence
-field: winner
+field: result
 - init:
 	blank fields
 - create:
@@ -17,12 +17,24 @@ field: winner
 - start:
 	init board
 	start game
+- forfeit:
+	end game
 - make move:
 	place piece on board
 	update moves sequence
 	check win condition
 - private check win:
-	run algorithm on board pieces
+	use last move
+	calc max conn in vert, hor, diag
+	update result if winner
+
+
+
+GameResultEnum:
+WIN_BLACK
+WIN_WHITE
+DRAW
+IN_PROGRESS
 
 
 
