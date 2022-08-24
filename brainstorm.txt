@@ -28,6 +28,10 @@ field: result
 	calc max conn in vert, hor, diag
 	update result if winner
 
+enum Move:
+Position {x, y}
+Forfeit
+
 
 
 GameResultEnum:
@@ -79,5 +83,4 @@ Flows:
 	click board
 	send move via websocket
 	server pushes next move to both players (move, win, draw, etc.)
-
 
