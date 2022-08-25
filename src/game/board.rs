@@ -21,7 +21,6 @@ impl Board {
     }
   }
 
-  /// Place
   pub fn place_piece(&mut self, x: usize, y: usize, piece_type: PieceType) {
     assert!(x < Board::SIZE_LIMIT && y < Board::SIZE_LIMIT, "Invalid piece coordinates!");
 
