@@ -1,5 +1,13 @@
 Objects:
 Lobby
+field: user1_id
+field: user2_id
+field: user1_socket
+field: user2_socket
+field: player_black_id
+field: player_white_id
+field: game
+field: lobby_status
 - handles Users joining/creating game
 - handles Game creation
 - handles websockets
@@ -78,3 +86,9 @@ Flows:
 	send move via websocket
 	server pushes next move to both players (move, win, draw, etc.)
 
+Lobby:
+- Create lobby
+- Join lobby
+- Assign sides
+- Start game
+- Start rematch

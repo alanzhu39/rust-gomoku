@@ -1,7 +1,7 @@
-mod game;
 // mod api;
 // mod database;
 // mod logging;
+pub mod game;
 
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 
