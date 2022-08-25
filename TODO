@@ -1,13 +1,5 @@
-- 2-player (link sharing)
-- 2-player (same computer)
-- 1-player (vs AI)
-- 1-player (analysis board)
-
-- timed games
-- display move order toggle
-- input modes (confirm move, instant move)
-- ghost mode (to inspect lines)
-- share a game
-
-- user accounts
-
+TODO:
+- websocket connections
+- user + session tokens module
+  - mvp: support anonymous users
+- database integration
