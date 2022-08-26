@@ -3,10 +3,15 @@ mod lobby_manager
 use actix_web::web;
 
 pub fn config(cfg: &mut web::ServiceConfig) {
-  cfg.service(
-      web::resource("/")
-        .route(web::get().to(HttpResponse::Ok))
-        .route(web::head().to(HttpResponse::MethodNotAllowed)),
-  )
-  .service(web::scope("/lobby").configure(lobby_manager::config));
+  cfg.route("", web::get().to(search_user))
+    .route("", web::post().to(register))
+    .service(
+        web::scope("/me")
+            .route("", web::get().to(me))
+            .service(web::scope("/friends").configure(friends::config)),
+    )
+    .route("/register", web::post().to(register))
+    .route("/login", web::post().to(login))
+    .route("/logout", web::post().to(logout))
+    .route("/{user_id}", web::get().to(get_user));
 }

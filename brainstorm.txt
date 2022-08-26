@@ -1,11 +1,18 @@
+POST /lobby/create
+	- start a lobby, open one websocket connection
+
+POST /lobby/join
+	- join an existing lobby, open second websocket connection
+
+- start lobby:
+	- creator sends start game message
+
+
 Objects:
 Lobby
-field: user1_id
-field: user2_id
-field: user1_socket
-field: user2_socket
-field: player_black_id
-field: player_white_id
+field: user1_connection
+field: user2_connection
+field: is_user1_black
 field: game
 field: lobby_status
 - handles Users joining/creating game

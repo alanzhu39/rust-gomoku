@@ -1,34 +1,35 @@
 use crate::game::Game;
 
 pub struct OnePlayerWaitingLobby {
-  user1_id: String,
+  // FIXME: update to websocket connection
+  user1_connection: String,
   is_user1_black: bool
 }
 
 impl OnePlayerWaitingLobby {
-  pub fn new(user1_id: String, is_user1_black: bool) -> OnePlayerWaitingLobby{
+  pub fn new(user1_connection: String, is_user1_black: bool) -> OnePlayerWaitingLobby{
     OnePlayerWaitingLobby {
-      user1_id: user1_id,
+      user1_connection: user1_connection,
       is_user1_black: is_user1_black
     }
   }
   
-  pub fn join_lobby(self, user2_id: String) -> TwoPlayersWaitingLobby {
-    TwoPlayersWaitingLobby::new(self, user2_id)
+  pub fn join_lobby(self, user2_connection: String) -> TwoPlayersWaitingLobby {
+    TwoPlayersWaitingLobby::new(self, user2_connection)
   }
 }
 
 pub struct TwoPlayersWaitingLobby {
-  user1_id: String,
-  user2_id: String,
+  user1_connection: String,
+  user2_connection: String,
   is_user1_black: bool
 }
 
 impl TwoPlayersWaitingLobby {
-  fn new(one_player_lobby: OnePlayerWaitingLobby, user2_id: String) -> TwoPlayersWaitingLobby {
+  fn new(one_player_lobby: OnePlayerWaitingLobby, user2_connection: String) -> TwoPlayersWaitingLobby {
     TwoPlayersWaitingLobby {
-      user1_id: one_player_lobby.user1_id,
-      user2_id: user2_id,
+      user1_connection: one_player_lobby.user1_connection,
+      user2_connection: user2_connection,
       is_user1_black: one_player_lobby.is_user1_black
     }
   }
@@ -43,8 +44,8 @@ impl TwoPlayersWaitingLobby {
 }
 
 pub struct GameStartedLobby {
-  user1_id: String,
-  user2_id: String,
+  user1_connection: String,
+  user2_connection: String,
   is_user1_black: bool,
   game: Game
 }
@@ -54,16 +55,16 @@ impl GameStartedLobby {
     let player_black_id;
     let player_white_id;
     if two_player_lobby.is_user1_black {
-      player_black_id = two_player_lobby.user1_id.clone();
-      player_white_id = two_player_lobby.user2_id.clone();
+      player_black_id = two_player_lobby.user1_connection.clone();
+      player_white_id = two_player_lobby.user2_connection.clone();
     } else {
-      player_black_id = two_player_lobby.user2_id.clone();
-      player_white_id = two_player_lobby.user1_id.clone();
+      player_black_id = two_player_lobby.user2_connection.clone();
+      player_white_id = two_player_lobby.user1_connection.clone();
     }
 
     GameStartedLobby {
-      user1_id: two_player_lobby.user1_id,
-      user2_id: two_player_lobby.user2_id,
+      user1_connection: two_player_lobby.user1_connection,
+      user2_connection: two_player_lobby.user2_connection,
       is_user1_black: two_player_lobby.is_user1_black,
       game: Game::new(player_black_id, player_white_id)
     }

@@ -14,8 +14,6 @@ pub enum GameState {
 }
 
 pub struct Game {
-  player_black_id: String,
-  player_white_id: String,
   board: Board,
   current_turn: PieceType,
   move_sequence: Vec<MoveType>,
@@ -23,10 +21,8 @@ pub struct Game {
 }
 
 impl Game {
-  pub fn new(player_black_id: String, player_white_id: String) -> Game {
+  pub fn new() -> Game {
     Game {
-      player_black_id: player_black_id,
-      player_white_id: player_white_id,
       board: Board::new(),
       current_turn: PieceType::Black,
       move_sequence: Vec::new(),
