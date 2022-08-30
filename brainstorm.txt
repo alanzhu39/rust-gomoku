@@ -7,6 +7,24 @@ POST /lobby/join
 - start lobby:
 	- creator sends start game message
 
+ClientConnection: Websocket implementation for client connection
+ClientConnectionManager: actor for controlling to websocket events
+LobbyManager: actor for controlling lobby events
+
+
+Actor Model:
+- LobbyManager
+	- lobby ids map
+- ClientConnection
+	- Session token -> connection map
+	- session token -> lobby id map
+
+Client socket receives user message
+-> send to lobby manager actor
+-> perform lobby action
+-> send message to client socket actor
+-> send message to client
+
 
 Objects:
 Lobby

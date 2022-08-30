@@ -2,6 +2,7 @@ use crate::lobby;
 
 pub struct LobbyManager {
   // TODO:
+  // Client connection manager address
   // Lobby maps
 }
 

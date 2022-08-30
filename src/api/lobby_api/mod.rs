@@ -1,4 +1,4 @@
-mod lobby_manager
+mod lobby_manager;
 
 use actix_web::web;
 

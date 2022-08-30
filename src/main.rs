@@ -3,6 +3,7 @@
 // mod logging;
 pub mod game;
 pub mod lobby;
+pub mod client_connection;
 
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 
