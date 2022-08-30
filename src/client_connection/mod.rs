@@ -1,6 +1,6 @@
 mod messages;
 
-use messages::*;
+pub use messages::*;
 use uuid::Uuid;
 use actix_web_actors::ws;
 
