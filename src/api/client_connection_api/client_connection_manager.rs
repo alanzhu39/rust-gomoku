@@ -1,16 +1,29 @@
 use actix::prelude::Addr;
 use super::lobby_api::LobbyManager;
+use crate::lobby::LobbyId;
 use crate::client_connection::*;
+use std::collections::HashMap;
 
 pub struct ClientConnectionManager {
   lobby_manager: Addr<LobbyManager>;
-  // Session token <> client connections map
-  // Session token <> lobby ids map
+  client_connections_map: HashMap<SessionToken, Addr<ClientConnection>>;
+  lobby_ids_map: HashMap<SessionToken, LobbyId>;
 }
 
 impl ClientConnectionManager {
-  pub fn create_client_connection(&mut self, session_token: String) {
+  pub fn new(lobby_manager_addr: Addr<LobbyManager>) {
+    ClientConnectionManager {
+      lobby_manager: lobby_manager_addr,
+      client_connections_map: HashMap::new(),
+      lobby_ids_map: HashMap::new()
+    }
+  }
+
+  pub fn create_client_connection(&mut self) {
     // TODO
+    // Generate UUID
+    // Start websocket
+    // Update map
   }
 }
 

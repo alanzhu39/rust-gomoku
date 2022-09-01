@@ -9,6 +9,7 @@ pub struct LobbyManager {
 impl LobbyManager {
   pub fn new() {
     // TODO
+    LobbyManager {}
   }
 
   pub fn create_lobby() {
@@ -18,4 +19,8 @@ impl LobbyManager {
   pub fn join_lobby() {
     // TODO
   }
+}
+
+impl Actor for LobbyManager {
+  type Context = Context<Self>;
 }

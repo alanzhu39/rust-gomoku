@@ -1,7 +1,10 @@
 use crate::game::Game;
+use uuid::Uuid;
+
+pub type LobbyId = Uuid;
 
 pub struct OnePlayerWaitingLobby {
-  // FIXME: update to websocket connection
+  lobby_id: LobbyId;
   user1_connection: String,
   is_user1_black: bool
 }
@@ -20,6 +23,7 @@ impl OnePlayerWaitingLobby {
 }
 
 pub struct TwoPlayersWaitingLobby {
+  lobby_id: LobbyId;
   user1_connection: String,
   user2_connection: String,
   is_user1_black: bool
@@ -44,6 +48,7 @@ impl TwoPlayersWaitingLobby {
 }
 
 pub struct GameStartedLobby {
+  lobby_id: LobbyId;
   user1_connection: String,
   user2_connection: String,
   is_user1_black: bool,

@@ -4,8 +4,10 @@ pub use messages::*;
 use uuid::Uuid;
 use actix_web_actors::ws;
 
+pub type SessionToken = Uuid;
+
 pub struct ClientConnection {
-  session_token: Uuid;
+  session_token: SessionToken;
   client_connection_manager: Addr<ClientConnectionManager>;
 }
 
