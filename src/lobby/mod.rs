@@ -1,10 +1,6 @@
 use crate::game::Game;
-use uuid::Uuid;
-
-pub type LobbyId = Uuid;
 
 pub struct OnePlayerWaitingLobby {
-  lobby_id: LobbyId;
   user1_connection: String,
   is_user1_black: bool
 }
@@ -23,7 +19,6 @@ impl OnePlayerWaitingLobby {
 }
 
 pub struct TwoPlayersWaitingLobby {
-  lobby_id: LobbyId;
   user1_connection: String,
   user2_connection: String,
   is_user1_black: bool
@@ -48,7 +43,6 @@ impl TwoPlayersWaitingLobby {
 }
 
 pub struct GameStartedLobby {
-  lobby_id: LobbyId;
   user1_connection: String,
   user2_connection: String,
   is_user1_black: bool,
@@ -71,7 +65,7 @@ impl GameStartedLobby {
       user1_connection: two_player_lobby.user1_connection,
       user2_connection: two_player_lobby.user2_connection,
       is_user1_black: two_player_lobby.is_user1_black,
-      game: Game::new(player_black_id, player_white_id)
+      game: Game::new()
     }
   }
 }

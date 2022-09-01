@@ -1,13 +1,14 @@
 // mod api;
 // mod database;
 // mod logging;
-pub mod game;
-pub mod lobby;
-pub mod client_connection;
+mod game;
+mod lobby;
+mod client_connection;
 mod api;
 
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 use api::{config, ClientConnectionManager, LobbyManager};
+use actix::*;
 
 #[get("/")]
 async fn hello() -> impl Responder {
@@ -25,12 +26,13 @@ async fn manual_hello() -> impl Responder {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-  let lobby_manager = LobbyManager::new();
-  let client_connection_manager = ClientConnectionManager::new();
+  let lobby_manager_addr = LobbyManager::new().start();
+  let client_connection_manager_addr = ClientConnectionManager::new(lobby_manager_addr.clone()).start();
 
-  HttpServer::new(|| {
+  HttpServer::new(move || {
     App::new()
-      .app_data()
+      .app_data(web::Data::new(lobby_manager_addr.clone()))
+      .app_data(web::Data::new(client_connection_manager_addr.clone()))
       .service(hello)
       .service(echo)
       .route("/hey", web::get().to(manual_hello))

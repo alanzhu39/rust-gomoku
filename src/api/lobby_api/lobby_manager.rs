@@ -1,4 +1,8 @@
 use crate::lobby;
+use actix::*;
+use uuid::Uuid;
+
+pub type LobbyId = Uuid;
 
 pub struct LobbyManager {
   // TODO:
@@ -7,7 +11,7 @@ pub struct LobbyManager {
 }
 
 impl LobbyManager {
-  pub fn new() {
+  pub fn new() -> LobbyManager {
     // TODO
     LobbyManager {}
   }
