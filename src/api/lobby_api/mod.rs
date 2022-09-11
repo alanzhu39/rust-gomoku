@@ -7,5 +7,5 @@ pub fn config(cfg: &mut web::ServiceConfig) {
 }
 
 async fn create_lobby() -> HttpResponse {
-  HttpResponse::Ok().finish()
+  HttpResponse::Ok().json("test")
 }

@@ -7,7 +7,8 @@ mod client_connection;
 mod api;
 
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
-use api::{config, ClientConnectionManager, LobbyManager};
+use api::{ClientConnectionManager, LobbyManager};
+use actix_cors::Cors;
 use actix::*;
 
 #[get("/")]
@@ -31,10 +32,18 @@ async fn main() -> std::io::Result<()> {
 
   HttpServer::new(move || {
     App::new()
+      .wrap(
+        Cors::default()
+          .allowed_origin("http://localhost:3000")
+          .allowed_methods(vec!["GET", "POST", "DELETE"])
+          .allow_any_header()
+          .max_age(3600)
+      )
       .app_data(web::Data::new(lobby_manager_addr.clone()))
       .app_data(web::Data::new(client_connection_manager_addr.clone()))
       .service(hello)
       .service(echo)
+      .configure(api::config)
       .route("/hey", web::get().to(manual_hello))
   })
   .bind(("127.0.0.1", 8080))?

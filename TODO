@@ -1,4 +1,11 @@
 TODO:
+
+9/10/22:
+In progress:
+- Testing websocket connection
+  - FE changes to call websocket endpoint
+
+
 - websocket connections
 - user + session tokens module
   - mvp: support anonymous users
