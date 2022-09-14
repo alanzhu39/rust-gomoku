@@ -1,5 +1,5 @@
-pub mod lobby_api;
-pub mod client_connection_api;
+mod lobby_api;
+mod client_connection_api;
 
 use actix_web::{web, HttpResponse};
 pub use lobby_api::lobby_manager::{LobbyManager, LobbyId};
