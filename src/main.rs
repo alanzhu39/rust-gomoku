@@ -11,16 +11,6 @@ use api::{ClientConnectionManager, LobbyManager};
 use actix_cors::Cors;
 use actix::*;
 
-#[get("/")]
-async fn hello() -> impl Responder {
-  HttpResponse::Ok().body("Hello world!")
-}
-
-#[post("/echo")]
-async fn echo(req_body: String) -> impl Responder {
-  HttpResponse::Ok().body(req_body)
-}
-
 async fn manual_hello() -> impl Responder {
   HttpResponse::Ok().body("Hey there!")
 }
@@ -41,8 +31,6 @@ async fn main() -> std::io::Result<()> {
       )
       .app_data(web::Data::new(lobby_manager_addr.clone()))
       .app_data(web::Data::new(client_connection_manager_addr.clone()))
-      .service(hello)
-      .service(echo)
       .configure(api::config)
       .route("/hey", web::get().to(manual_hello))
   })
