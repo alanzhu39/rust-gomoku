@@ -4,6 +4,7 @@ TODO:
 In progress:
 - Messaging format
 - Initializing lobby manager, client connections manager
+- ws connect api
 - FE components brainstorming
 
 Finished:
