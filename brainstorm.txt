@@ -1,11 +1,29 @@
-POST /lobby/create
-	- start a lobby, open one websocket connection
+API:
+POST ws::/connect
+	- optional session_token
+	- sends session_token back on connection
 
-POST /lobby/join
-	- join an existing lobby, open second websocket connection
+Websocket server messages
+- Move made
+	- probably should include side
+- Game started
+- Game ended (result)
+- Rematch?
 
-- start lobby:
-	- creator sends start game message
+Websocket client messages
+- Create lobby
+	- Choosing sides?
+	- Time control?
+- Join lobby
+- Start lobby
+- Make move
+	- should include side?
+- Forfeit
+- Rematch
+
+*Everything except initial connection will be via websocket
+	- will need some infrastructure around keeping socket alive (probably FE task?)
+
 
 ClientConnection: Websocket implementation for client connection
 ClientConnectionManager: actor for controlling to websocket events

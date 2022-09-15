@@ -1,6 +1,9 @@
+mod lobby_manager;
+
+pub use lobby_manager::{LobbyManager, LobbyId};
 use crate::game::Game;
 
-pub struct OnePlayerWaitingLobby {
+struct OnePlayerWaitingLobby {
   user1_connection: String,
   is_user1_black: bool
 }
@@ -18,7 +21,7 @@ impl OnePlayerWaitingLobby {
   }
 }
 
-pub struct TwoPlayersWaitingLobby {
+struct TwoPlayersWaitingLobby {
   user1_connection: String,
   user2_connection: String,
   is_user1_black: bool
@@ -42,7 +45,7 @@ impl TwoPlayersWaitingLobby {
   }
 }
 
-pub struct GameStartedLobby {
+struct GameStartedLobby {
   user1_connection: String,
   user2_connection: String,
   is_user1_black: bool,

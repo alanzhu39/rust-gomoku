@@ -7,7 +7,8 @@ mod client_connection;
 mod api;
 
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
-use api::{ClientConnectionManager, LobbyManager};
+use client_connection::ClientConnectionManager;
+use lobby::LobbyManager;
 use actix_cors::Cors;
 use actix::*;
 

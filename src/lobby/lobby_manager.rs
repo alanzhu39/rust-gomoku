@@ -1,5 +1,7 @@
-use crate::lobby;
 use actix::*;
+
+use super::{OnePlayerWaitingLobby, TwoPlayersWaitingLobby, GameStartedLobby};
+
 use uuid::Uuid;
 
 pub type LobbyId = Uuid;

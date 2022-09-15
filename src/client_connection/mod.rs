@@ -1,14 +1,16 @@
-mod messages;
+mod client_connection_manager;
 
-pub use messages::*;
+use crate::api::message::{ClientMessage, ServerMessage};
+pub use client_connection_manager::{ClientConnectionManager, ClientConnectionId};
+
 use actix::*;
-use uuid::Uuid;
 use actix_web_actors::ws;
-use crate::api::ClientConnectionManager;
+
+use uuid::Uuid;
 
 pub type SessionToken = Uuid;
 
-pub struct ClientConnection {
+struct ClientConnection {
   session_token: SessionToken,
   client_connection_manager: Addr<ClientConnectionManager>,
 }

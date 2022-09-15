@@ -1,5 +1,21 @@
 TODO:
 
+9/14/22:
+In progress:
+- Messaging format
+- Initializing lobby manager, client connections manager
+- FE components brainstorming
+
+Finished:
+- Testing websocket connection
+  - Echo websocket on server side
+  - FE change to initialize websocket
+  - FE changes to interact with websocket
+- Echo websocket implementation working
+  - Need ws:// in websocket initialization
+
+
+
 9/10/22:
 In progress:
 - Testing websocket connection

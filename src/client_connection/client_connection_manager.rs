@@ -1,8 +1,10 @@
 use actix::*;
 use actix::Addr;
-use crate::api::LobbyManager;
-use crate::api::LobbyId;
-use crate::client_connection::*;
+
+use crate::lobby::{LobbyManager, LobbyId};
+use crate::api::message::ClientMessage;
+use super::{ClientConnection, SessionToken};
+
 use std::collections::HashMap;
 use uuid::Uuid;
 
