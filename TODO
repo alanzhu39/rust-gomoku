@@ -1,5 +1,19 @@
 TODO:
 
+9/15/22:
+TODO:
+- Finish implementation for lobby, client messages
+  - Finish behavior
+- Finish game implementation
+- Initializing lobby manager, client connections manager, etc.
+
+In progress:
+
+Finished:
+- Messaging format skeleton
+
+
+
 9/14/22:
 In progress:
 - Messaging format
