@@ -11,17 +11,13 @@ use uuid::Uuid;
 pub type ClientConnectionId = Uuid;
 
 pub struct ClientConnectionManager {
-  lobby_manager: Addr<LobbyManager>,
-  client_connections_map: HashMap<SessionToken, Addr<ClientConnection>>,
-  lobby_ids_map: HashMap<SessionToken, LobbyId>,
+  client_connections_map: HashMap<SessionToken, Addr<ClientConnection>>
 }
 
 impl ClientConnectionManager {
-  pub fn new(lobby_manager_addr: Addr<LobbyManager>) -> ClientConnectionManager {
+  pub fn new() -> ClientConnectionManager {
     ClientConnectionManager {
-      lobby_manager: lobby_manager_addr,
-      client_connections_map: HashMap::new(),
-      lobby_ids_map: HashMap::new()
+      client_connections_map: HashMap::new()
     }
   }
 
@@ -37,10 +33,10 @@ impl Actor for ClientConnectionManager {
   type Context = Context<Self>;
 }
 
-impl Handler<ClientMessage> for ClientConnectionManager {
+impl Handler<ClientConnectionManagerMessage> for ClientConnectionManager {
   type Result = ();
 
-  fn handle(&mut self, msg: ClientMessage, ctx: &mut Self::Context) -> Self::Result {
+  fn handle(&mut self, msg: ClientConnectionManagerMessage, ctx: &mut Self::Context) -> Self::Result {
     // TODO
   }
 }

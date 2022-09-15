@@ -13,6 +13,8 @@ pub type SessionToken = Uuid;
 struct ClientConnection {
   session_token: SessionToken,
   client_connection_manager: Addr<ClientConnectionManager>,
+  lobby_manager: Addr<LobbyManager>,
+  lobby: Addr<Lobby>
 }
 
 impl ClientConnection {
@@ -25,11 +27,11 @@ impl Actor for ClientConnection {
   type Context = ws::WebsocketContext<Self>;
 }
 
-impl Handler<ServerMessage> for ClientConnection {
+impl Handler<ClientConnectionMessage> for ClientConnection {
   type Result = ();
 
   fn handle(&mut self, msg: ServerMessage, ctx: &mut Self::Context) {
-    // TODO: handle client connection manager message (sending back to client)
+    // TODO: handle client connection message (eg. sending back to client, etc.)
   }
 }
 

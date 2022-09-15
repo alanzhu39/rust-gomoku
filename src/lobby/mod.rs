@@ -1,74 +1,53 @@
 mod lobby_manager;
 
+use actix::*;
+
 pub use lobby_manager::{LobbyManager, LobbyId};
 use crate::game::Game;
 
-struct OnePlayerWaitingLobby {
-  user1_connection: String,
-  is_user1_black: bool
+enum LobbyStatus {
+  OnePlayerWaiting,
+  TwoPlayersWaiting,
+  GameStarted,
+  GameFinished
 }
 
-impl OnePlayerWaitingLobby {
-  pub fn new(user1_connection: String, is_user1_black: bool) -> OnePlayerWaitingLobby{
-    OnePlayerWaitingLobby {
+pub struct Lobby {
+  lobby_id: LobbyId,
+  user1_connection: Addr<ClientConnection>,
+  user2_connection: Addr<ClientConnection>,
+  is_user1_black: bool,
+  lobby_status: LobbyStatus,
+  game: Game,
+  lobby_manager: Addr<LobbyManager>
+}
+
+impl Lobby {
+  pub fn new(user1_connection: Addr<ClientConnection>, is_user1_black: bool) -> Lobby {
+    // TODO: Create lobby id
+    Lobby {
       user1_connection: user1_connection,
       is_user1_black: is_user1_black
     }
   }
-  
-  pub fn join_lobby(self, user2_connection: String) -> TwoPlayersWaitingLobby {
-    TwoPlayersWaitingLobby::new(self, user2_connection)
+
+  pub fn join(&mut self, user2_connection: Addr<ClientConnection>) {
+    self.user2_connection = user2_connection
+  }
+
+  pub fn start_game(&mut self) {
+    self.game = Game::new()
   }
 }
 
-struct TwoPlayersWaitingLobby {
-  user1_connection: String,
-  user2_connection: String,
-  is_user1_black: bool
+impl Actor for Lobby {
+  type Context = Context<Self>;
 }
 
-impl TwoPlayersWaitingLobby {
-  fn new(one_player_lobby: OnePlayerWaitingLobby, user2_connection: String) -> TwoPlayersWaitingLobby {
-    TwoPlayersWaitingLobby {
-      user1_connection: one_player_lobby.user1_connection,
-      user2_connection: user2_connection,
-      is_user1_black: one_player_lobby.is_user1_black
-    }
-  }
+impl Handler<LobbyMessage> for Lobby {
+  type Result = ();
 
-  pub fn set_is_user1_black(&mut self, is_user1_black: bool) {
-    self.is_user1_black = is_user1_black;
-  }
-
-  pub fn start_lobby_game(self) -> GameStartedLobby {
-    GameStartedLobby::new(self)
-  }
-}
-
-struct GameStartedLobby {
-  user1_connection: String,
-  user2_connection: String,
-  is_user1_black: bool,
-  game: Game
-}
-
-impl GameStartedLobby {
-  fn new(two_player_lobby: TwoPlayersWaitingLobby) -> GameStartedLobby {
-    let player_black_id;
-    let player_white_id;
-    if two_player_lobby.is_user1_black {
-      player_black_id = two_player_lobby.user1_connection.clone();
-      player_white_id = two_player_lobby.user2_connection.clone();
-    } else {
-      player_black_id = two_player_lobby.user2_connection.clone();
-      player_white_id = two_player_lobby.user1_connection.clone();
-    }
-
-    GameStartedLobby {
-      user1_connection: two_player_lobby.user1_connection,
-      user2_connection: two_player_lobby.user2_connection,
-      is_user1_black: two_player_lobby.is_user1_black,
-      game: Game::new()
-    }
+  fn handle(&mut self, msg: LobbyMessage, ctx: &mut Self::Context) -> Self::Result {
+    // TODO
   }
 }

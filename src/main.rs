@@ -1,4 +1,3 @@
-// mod api;
 // mod database;
 // mod logging;
 mod game;
@@ -6,11 +5,12 @@ mod lobby;
 mod client_connection;
 mod api;
 
+use actix::*;
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+use actix_cors::Cors;
+
 use client_connection::ClientConnectionManager;
 use lobby::LobbyManager;
-use actix_cors::Cors;
-use actix::*;
 
 async fn manual_hello() -> impl Responder {
   HttpResponse::Ok().body("Hey there!")

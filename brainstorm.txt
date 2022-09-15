@@ -1,3 +1,8 @@
+Messages:
+ClientMessage: used by ClientConnection to model messages received from client
+ServerMessage: used by ClientConnection to model messages to be sent from server
+Lobby
+
 API:
 POST ws::/connect
 	- optional session_token

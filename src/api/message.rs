@@ -4,10 +4,6 @@ pub enum ClientMessage {
   Todo
 }
 
-impl Message for ClientMessage {
-  type Result = ();
-}
-
 impl ClientMessage {
   pub fn parse(text: &str) -> ClientMessage {
     // TODO: parse text message
@@ -15,10 +11,41 @@ impl ClientMessage {
   }
 }
 
-pub enum ServerMessage {
-
+pub enum ClientConnectionManagerMessage {
+  CreateClientConnection,
+  CloseClientConnection
 }
 
-impl Message for ServerMessage {
+pub enum ClientConnectionMessage {
+  LobbyJoined,
+  LobbyGameMove,
+  LobbyGameFinished
+}
+
+pub enum LobbyManagerMessage {
+  CreateLobby,
+  CloseLobby
+}
+
+pub enum LobbyMessage {
+  ClientGameMove,
+  ClientLeaveLobby,
+  ClientJoinLobby,
+  ClientRematch
+}
+
+impl Message for ClientConnectionManagerMessage {
+  type Result = ();
+}
+
+impl Message for ClientConnectionMessage {
+  type Result = ();
+}
+
+impl Message for LobbyManagerMessage {
+  type Result = ();
+}
+
+impl Message for LobbyMessage {
   type Result = ();
 }
