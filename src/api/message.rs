@@ -12,7 +12,7 @@ impl ClientMessage {
 }
 
 pub enum ClientConnectionManagerMessage {
-  CreateClientConnection,
+  CreateClientConnection { lobby_manager: Addr<LobbyManager> },
   CloseClientConnection
 }
 

@@ -11,4 +11,5 @@ pub fn config(cfg: &mut web::ServiceConfig) {
       .route(web::head().to(HttpResponse::MethodNotAllowed)),
   )
   .service(web::scope("/lobby").configure(lobby_api::config));
+  .service(web::scope("/connect").configure(client_connection_api::config));
 }

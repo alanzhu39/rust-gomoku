@@ -14,10 +14,20 @@ struct ClientConnection {
   session_token: SessionToken,
   client_connection_manager: Addr<ClientConnectionManager>,
   lobby_manager: Addr<LobbyManager>,
-  lobby: Addr<Lobby>
+  lobby: Option<Addr<Lobby>>
 }
 
 impl ClientConnection {
+  fn new(client_connection_manager: Addr<ClientConnectionManager>,
+      lobby_manager: Addr<LobbyManager>) -> ClientConnection {
+    ClientConnection {
+      session_token: Uuid::new_v4(),
+      client_connection_manager: client_connection_manager,
+      lobby_manager: lobby_manager,
+      lobby: None
+    }
+  }
+
   fn hb(&self, ctx: &mut ws::WebsocketContext<Self>) {
     // TODO: heartbeat
   }
