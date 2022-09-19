@@ -1,5 +1,7 @@
 use actix::*;
 
+use crate::client_connection::{SessionToken, ClientConnection};
+
 pub enum ClientMessage {
   Todo
 }
@@ -12,7 +14,7 @@ impl ClientMessage {
 }
 
 pub enum ClientConnectionManagerMessage {
-  CreateClientConnection { lobby_manager: Addr<LobbyManager> },
+  AddClientConnection { session_token: SessionToken, client_connection_addr: Addr<ClientConnection> },
   CloseClientConnection
 }
 

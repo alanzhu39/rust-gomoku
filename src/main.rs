@@ -6,7 +6,7 @@ mod client_connection;
 mod api;
 
 use actix::*;
-use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{web, App, HttpResponse, HttpServer, Responder};
 use actix_cors::Cors;
 
 use client_connection::ClientConnectionManager;
@@ -19,7 +19,7 @@ async fn manual_hello() -> impl Responder {
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
   let lobby_manager_addr = LobbyManager::new().start();
-  let client_connection_manager_addr = ClientConnectionManager::new(lobby_manager_addr.clone()).start();
+  let client_connection_manager_addr = ClientConnectionManager::new().start();
 
   HttpServer::new(move || {
     App::new()

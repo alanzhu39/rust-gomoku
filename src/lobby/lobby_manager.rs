@@ -1,6 +1,7 @@
 use actix::*;
 
-use super::{OnePlayerWaitingLobby, TwoPlayersWaitingLobby, GameStartedLobby};
+use super::Lobby;
+use crate::api::message::{LobbyManagerMessage};
 
 use uuid::Uuid;
 

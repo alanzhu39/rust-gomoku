@@ -1,33 +1,38 @@
+use actix::*;
 use actix_web_actors::ws;
-use actix::{Actor, StreamHandler};
 use actix_web::{web, HttpRequest, HttpResponse, Error};
+
+use uuid::Uuid;
+
+use crate::client_connection::{ClientConnection, ClientConnectionManager};
+use crate::lobby::LobbyManager;
+use crate::api::message::ClientConnectionManagerMessage;
 
 pub fn config(cfg: &mut web::ServiceConfig) {
   cfg.route("/", web::get().to(create_client_connection));
 }
 
-struct MyWs;
-
-impl Actor for MyWs {
-  type Context = ws::WebsocketContext<Self>;
-}
-
-/// Handler for ws::Message message
-impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for MyWs {
-  fn handle(&mut self, msg: Result<ws::Message, ws::ProtocolError>, ctx: &mut Self::Context) {
-    match msg {
-      Ok(ws::Message::Ping(msg)) => ctx.pong(&msg),
-      Ok(ws::Message::Text(text)) => ctx.text(text),
-      Ok(ws::Message::Binary(bin)) => ctx.binary(bin),
-      _ => (),
-    }
-  }
-}
-
 async fn create_client_connection(req: HttpRequest, stream: web::Payload) -> Result<HttpResponse, Error> {
-  let client_connection_manager = req.app_data::<Data<Addr<ClientConnectionManager>>().unwrap();
-  let lobby_manager = req.app_data::<Data<Addr<LobbyManager>>().unwrap();
-  client_connection_manager.send(
-    ClientConnectionManagerMessage::CreateClientConnection { lobby_manager: lobby_manager })
-    .wait().unwrap();
+  let client_connection_manager = req.app_data::<web::Data<Addr<ClientConnectionManager>>>().unwrap().get_ref().clone();
+  let lobby_manager = req.app_data::<web::Data<Addr<LobbyManager>>>().unwrap().get_ref().clone();
+
+  // Generate session token
+  let session_token = Uuid::new_v4();
+  let client_connection = ClientConnection::new(session_token.clone(), client_connection_manager.clone(), lobby_manager);
+
+  // Start websocket
+  let resp = ws::WsResponseBuilder::new(client_connection, &req, stream).start_with_addr();
+
+  // Update map
+  match resp {
+    Ok((client_connection_addr, http_response)) => {
+      // TODO: error case on send
+      client_connection_manager.do_send(ClientConnectionManagerMessage::AddClientConnection{
+        session_token: session_token,
+        client_connection_addr: client_connection_addr
+      });
+      Ok(http_response)
+    },
+    Err(e) => Err(e),
+  }
 }

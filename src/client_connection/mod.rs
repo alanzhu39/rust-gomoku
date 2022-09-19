@@ -1,6 +1,7 @@
 mod client_connection_manager;
 
-use crate::api::message::{ClientMessage, ServerMessage};
+use crate::api::message::{ClientMessage, ClientConnectionMessage};
+use crate::lobby::{Lobby, LobbyManager};
 pub use client_connection_manager::{ClientConnectionManager, ClientConnectionId};
 
 use actix::*;
@@ -10,7 +11,7 @@ use uuid::Uuid;
 
 pub type SessionToken = Uuid;
 
-struct ClientConnection {
+pub struct ClientConnection {
   session_token: SessionToken,
   client_connection_manager: Addr<ClientConnectionManager>,
   lobby_manager: Addr<LobbyManager>,
@@ -18,10 +19,10 @@ struct ClientConnection {
 }
 
 impl ClientConnection {
-  fn new(client_connection_manager: Addr<ClientConnectionManager>,
+  pub fn new(session_token: SessionToken, client_connection_manager: Addr<ClientConnectionManager>,
       lobby_manager: Addr<LobbyManager>) -> ClientConnection {
     ClientConnection {
-      session_token: Uuid::new_v4(),
+      session_token: session_token,
       client_connection_manager: client_connection_manager,
       lobby_manager: lobby_manager,
       lobby: None
@@ -40,23 +41,18 @@ impl Actor for ClientConnection {
 impl Handler<ClientConnectionMessage> for ClientConnection {
   type Result = ();
 
-  fn handle(&mut self, msg: ServerMessage, ctx: &mut Self::Context) {
+  fn handle(&mut self, msg: ClientConnectionMessage, ctx: &mut Self::Context) {
     // TODO: handle client connection message (eg. sending back to client, etc.)
   }
 }
 
 impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for ClientConnection {
   fn handle(&mut self, msg: Result<ws::Message, ws::ProtocolError>, ctx: &mut Self::Context) {
+    println!("{:?}", msg);
     match msg {
       Ok(ws::Message::Ping(msg)) => ctx.pong(&msg),
-      Ok(ws::Message::Text(text)) => {
-        let client_message = ClientMessage::parse(&text);
-        match client_message {
-          _ => {
-            // TODO: handle text
-          }
-        }
-      },
+      Ok(ws::Message::Text(text)) => ctx.text(text),
+      Ok(ws::Message::Binary(bin)) => ctx.binary(bin),
       _ => ()
     }
   }

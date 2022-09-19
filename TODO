@@ -1,5 +1,14 @@
 TODO:
 
+9/18/22:
+In progress:
+- Finish client connection + create lobby API integration test
+  - Create client implementation in BE
+  - Send create client message from FE
+  - Create lobby API implementation in BE
+
+
+
 9/15/22:
 TODO:
 - Finish implementation for lobby, client messages
