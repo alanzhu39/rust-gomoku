@@ -5,6 +5,7 @@ use crate::client_connection::{SessionToken, ClientConnection};
 use crate::lobby::LobbyId;
 use crate::game::MoveType;
 
+#[derive(Debug)]
 pub enum ClientMessage {
   CreateLobby,
   JoinLobby { lobby_id: LobbyId },
@@ -15,32 +16,34 @@ pub enum ClientMessage {
 
 impl ClientMessage {
   pub fn parse(text: String) -> Result<ClientMessage, ParsingError> {
-    // TODO: parse text message
+    let mut command = text.as_str();
+    let mut args = "";
+
     let parts = text.split_once("::");
-    match parts {
-      Some((first, rest)) => {
-        match first {
-          "CREATE_LOBBY" => {
-            Ok(ClientMessage::CreateLobby)
-          },
-          "JOIN_LOBBY" => {
-            if let Ok(lobby_id) = Uuid::parse_str(rest) {
-              Ok(ClientMessage::JoinLobby{ lobby_id: lobby_id })
-            } else {
-              Err(ParsingError)
-            }
-          },
-          "START_LOBBY" => {
-            Ok(ClientMessage::StartLobby)
-          },
-          "PLAYER_MOVE" => {
-            if let Ok(move_type) = Self::parse_player_move(rest) {
-              Ok(ClientMessage::PlayerMove{ move_type: move_type })
-            } else {
-              Err(ParsingError)
-            }
-          },
-          _ => Err(ParsingError)
+    if let Some((first, rest)) = parts {
+      command = first;
+      args = rest;
+    }
+
+    match command {
+      "CREATE_LOBBY" => {
+        Ok(ClientMessage::CreateLobby)
+      },
+      "JOIN_LOBBY" => {
+        if let Ok(lobby_id) = Uuid::parse_str(args) {
+          Ok(ClientMessage::JoinLobby{ lobby_id: lobby_id })
+        } else {
+          Err(ParsingError)
+        }
+      },
+      "START_LOBBY" => {
+        Ok(ClientMessage::StartLobby)
+      },
+      "PLAYER_MOVE" => {
+        if let Ok(move_type) = Self::parse_player_move(args) {
+          Ok(ClientMessage::PlayerMove{ move_type: move_type })
+        } else {
+          Err(ParsingError)
         }
       },
       _ => Err(ParsingError)
@@ -48,19 +51,35 @@ impl ClientMessage {
   }
 
   fn parse_player_move(move_text: &str) -> Result<MoveType, ParsingError> {
-    let mut coords = move_text.chars();
-    let col = coords.next();
-    let row = coords.next();
+    let mut command = move_text;
+    let mut args = "";
 
-    // TODO: handle forfeit
-    if let (Some(col), Some(row)) = (col, row) {
-      Ok(MoveType::PlacePiece(col as usize - ('a' as usize), row as usize))
-    } else {
-      Err(ParsingError)
+    let parts = move_text.split_once(":");
+    if let Some((first, rest)) = parts {
+      command = first;
+      args = rest;
+    }
+
+    match command {
+      "PIECE" => {
+        let col = args.chars().nth(0);
+        let row = &args[1..].parse::<usize>();
+
+        if let (Some(col), Ok(row)) = (col, row) {
+          Ok(MoveType::PlacePiece((col as usize) - ('a' as usize), *row - 1))
+        } else {
+          Err(ParsingError)
+        }
+      },
+      "FORFEIT" => {
+        Ok(MoveType::Forfeit)
+      },
+      _ => Err(ParsingError)
     }
   }
 }
 
+#[derive(Debug)]
 pub struct ParsingError;
 
 pub enum ClientConnectionManagerMessage {

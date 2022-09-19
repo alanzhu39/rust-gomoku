@@ -1,9 +1,10 @@
-// mod database;
-// mod logging;
 mod game;
 mod lobby;
 mod client_connection;
 mod api;
+
+#[cfg(test)]
+mod tests;
 
 use actix::*;
 use actix_web::{web, App, HttpResponse, HttpServer, Responder};

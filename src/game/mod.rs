@@ -2,6 +2,7 @@ mod board;
 
 use board::{Board, PieceType};
 
+#[derive(Debug)]
 pub enum MoveType {
   PlacePiece(usize, usize),
   Forfeit
