@@ -31,6 +31,7 @@ async fn create_client_connection(req: HttpRequest, stream: web::Payload) -> Res
         session_token: session_token,
         client_connection_addr: client_connection_addr
       });
+      // TODO: send session token
       Ok(http_response)
     },
     Err(e) => Err(e),

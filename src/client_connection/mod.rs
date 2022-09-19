@@ -51,8 +51,10 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for ClientConnection 
     println!("{:?}", msg);
     match msg {
       Ok(ws::Message::Ping(msg)) => ctx.pong(&msg),
-      Ok(ws::Message::Text(text)) => ctx.text(text),
-      Ok(ws::Message::Binary(bin)) => ctx.binary(bin),
+      Ok(ws::Message::Text(text)) => {
+        let client_message = ClientMessage::parse(String::from(text));
+
+      },
       _ => ()
     }
   }
