@@ -7,6 +7,9 @@ In progress:
   - Send create client message from FE
   - Create lobby API implementation in BE
 
+Finished:
+- Create client connection API (GET ws::/connect)
+
 
 
 9/15/22:

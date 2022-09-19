@@ -9,7 +9,7 @@ use crate::lobby::LobbyManager;
 use crate::api::message::ClientConnectionManagerMessage;
 
 pub fn config(cfg: &mut web::ServiceConfig) {
-  cfg.route("/", web::get().to(create_client_connection));
+  cfg.route("", web::get().to(create_client_connection));
 }
 
 async fn create_client_connection(req: HttpRequest, stream: web::Payload) -> Result<HttpResponse, Error> {
