@@ -53,7 +53,25 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for ClientConnection 
       Ok(ws::Message::Ping(msg)) => ctx.pong(&msg),
       Ok(ws::Message::Text(text)) => {
         let client_message = ClientMessage::parse(String::from(text));
-
+        if let Ok(client_message) = client_message {
+          match client_message {
+            ClientMessage::CreateLobby => {
+              // Send message to lobby manager
+              // Update lobby address
+            },
+            ClientMessage::JoinLobby { lobby_id: lobby_id } => {
+              // Send message to lobby manager
+              // Update lobby address
+            },
+            ClientMessage::StartLobby => {
+              // Send start message to lobby?
+            },
+            ClientMessage::PlayerMove { move_type: move_type } => {
+              // Send move message to lobby
+            },
+            _ => ()
+          }
+        }
       },
       _ => ()
     }

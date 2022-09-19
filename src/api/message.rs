@@ -31,7 +31,7 @@ impl ClientMessage {
       },
       "JOIN_LOBBY" => {
         if let Ok(lobby_id) = Uuid::parse_str(args) {
-          Ok(ClientMessage::JoinLobby{ lobby_id: lobby_id })
+          Ok(ClientMessage::JoinLobby { lobby_id: lobby_id })
         } else {
           Err(ParsingError)
         }
@@ -41,7 +41,7 @@ impl ClientMessage {
       },
       "PLAYER_MOVE" => {
         if let Ok(move_type) = Self::parse_player_move(args) {
-          Ok(ClientMessage::PlayerMove{ move_type: move_type })
+          Ok(ClientMessage::PlayerMove { move_type: move_type })
         } else {
           Err(ParsingError)
         }

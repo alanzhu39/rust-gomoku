@@ -1,10 +1,20 @@
 TODO:
 
+9/19/22:
+In progress:
+- Create lobby API implementation in BE
+- Join/start lobby implementation in BE
+- Game implementation in BE
+
+Finished:
+- Basic client message parsing
+  - create/join/start lobby, player move
+
+
+
 9/18/22:
 In progress:
 - Finish client connection + create lobby API integration test
-  - Create client implementation in BE
-  - Send create client message from FE
   - Create lobby API implementation in BE
 
 Finished:
