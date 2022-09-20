@@ -5,7 +5,7 @@ use actix::*;
 pub use lobby_manager::{LobbyManager, LobbyId};
 use crate::game::Game;
 use crate::client_connection::ClientConnection;
-use crate::api::message::LobbyMessage;
+use crate::api::message::{ClientConnectionMessage, LobbyMessage};
 
 enum LobbyStatus {
   OnePlayerWaiting,
@@ -27,7 +27,6 @@ pub struct Lobby {
 impl Lobby {
   pub fn new(lobby_id: LobbyId, user1_connection: Addr<ClientConnection>, is_user1_black: bool,
       lobby_manager: Addr<LobbyManager>) -> Lobby {
-    // TODO: Create lobby id
     Lobby {
       lobby_id: lobby_id,
       user1_connection: Some(user1_connection),
@@ -37,16 +36,6 @@ impl Lobby {
       game: None,
       lobby_manager: lobby_manager
     }
-  }
-
-  pub fn join(&mut self, user2_connection: Addr<ClientConnection>) {
-    // TODO: check existing
-    self.user2_connection = Some(user2_connection)
-  }
-
-  pub fn start_game(&mut self) {
-    // TODO: check existing
-    self.game = Some(Game::new())
   }
 }
 
@@ -58,6 +47,26 @@ impl Handler<LobbyMessage> for Lobby {
   type Result = ();
 
   fn handle(&mut self, msg: LobbyMessage, ctx: &mut Self::Context) -> Self::Result {
-    // TODO
+    match msg {
+      LobbyMessage::ClientJoinLobby { user2_connection: user2_connection } => {
+        // TODO: check existing
+        self.user2_connection = Some(user2_connection.clone());
+        user2_connection.do_send(ClientConnectionMessage::LobbyJoined { lobby_addr: ctx.address() });
+      },
+      LobbyMessage::ClientStartLobby => {
+        // TODO: check existing
+        self.game = Some(Game::new())
+      },
+      LobbyMessage::ClientGameMove { move_type: move_type } => {
+        // TODO
+        // Call game method
+      },
+      LobbyMessage::ClientLeaveLobby => {
+        // TODO
+      },
+      LobbyMessage::ClientRematch => {
+        // TODO
+      }
+    }
   }
 }

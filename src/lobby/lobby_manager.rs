@@ -1,25 +1,23 @@
 use actix::*;
 
-use super::Lobby;
-use crate::api::message::{LobbyManagerMessage};
-
+use std::collections::HashMap;
 use uuid::Uuid;
+
+use super::Lobby;
+use crate::api::message::{ClientConnectionMessage, LobbyManagerMessage};
+use crate::client_connection::ClientConnection;
 
 pub type LobbyId = Uuid;
 
 pub struct LobbyManager {
-  // TODO:
-  // Lobby maps
+  lobbies_map: HashMap<LobbyId, Addr<Lobby>>
 }
 
 impl LobbyManager {
   pub fn new() -> LobbyManager {
-    // TODO
-    LobbyManager {}
-  }
-
-  pub fn create_lobby() {
-    // TODO
+    LobbyManager {
+      lobbies_map: HashMap::new()
+    }
   }
 }
 
@@ -31,6 +29,26 @@ impl Handler<LobbyManagerMessage> for LobbyManager {
   type Result = ();
 
   fn handle(&mut self, msg: LobbyManagerMessage, ctx: &mut Self::Context) -> Self::Result {
-    // TODO
+    match msg {
+      LobbyManagerMessage::CreateLobby { user1_connection: user1_connection } => {
+        // Create lobby
+        let lobby_id = Uuid::new_v4();
+        let is_user1_black = true;
+        let lobby_addr = Lobby::new(lobby_id, user1_connection.clone(), is_user1_black, ctx.address()).start();
+
+        // Update map
+        self.lobbies_map.insert(lobby_id, lobby_addr.clone());
+
+        // Send message to client connection
+        user1_connection.do_send(ClientConnectionMessage::LobbyJoined { lobby_addr: lobby_addr });
+      },
+      LobbyManagerMessage::JoinLobby { lobby_id: lobby_id, user2_connection: user2_connection } => {
+        // Send lobby join message
+          // Lobby sends message to client connection on successful join
+      },
+      CloseLobby => {
+        // TODO
+      }
+    }
   }
 }

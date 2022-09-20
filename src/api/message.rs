@@ -2,7 +2,7 @@ use actix::*;
 use uuid::Uuid;
 
 use crate::client_connection::{SessionToken, ClientConnection};
-use crate::lobby::LobbyId;
+use crate::lobby::{Lobby, LobbyId};
 use crate::game::MoveType;
 
 #[derive(Debug)]
@@ -88,20 +88,22 @@ pub enum ClientConnectionManagerMessage {
 }
 
 pub enum ClientConnectionMessage {
-  LobbyJoined,
+  LobbyJoined { lobby_addr: Addr<Lobby> },
   LobbyGameMove,
   LobbyGameFinished
 }
 
 pub enum LobbyManagerMessage {
-  CreateLobby,
+  CreateLobby { user1_connection: Addr<ClientConnection> },
+  JoinLobby { lobby_id: LobbyId, user2_connection: Addr<ClientConnection> },
   CloseLobby
 }
 
 pub enum LobbyMessage {
-  ClientGameMove,
+  ClientJoinLobby { user2_connection: Addr<ClientConnection> },
+  ClientStartLobby,
+  ClientGameMove { move_type: MoveType },
   ClientLeaveLobby,
-  ClientJoinLobby,
   ClientRematch
 }
 

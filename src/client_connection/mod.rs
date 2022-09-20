@@ -1,6 +1,6 @@
 mod client_connection_manager;
 
-use crate::api::message::{ClientMessage, ClientConnectionMessage};
+use crate::api::message::{ClientMessage, ClientConnectionMessage, LobbyMessage, LobbyManagerMessage};
 use crate::lobby::{Lobby, LobbyManager};
 pub use client_connection_manager::{ClientConnectionManager, ClientConnectionId};
 
@@ -42,7 +42,17 @@ impl Handler<ClientConnectionMessage> for ClientConnection {
   type Result = ();
 
   fn handle(&mut self, msg: ClientConnectionMessage, ctx: &mut Self::Context) {
-    // TODO: handle client connection message (eg. sending back to client, etc.)
+    match msg {
+      ClientConnectionMessage::LobbyJoined { lobby_addr: lobby_addr } => {
+        self.lobby = Some(lobby_addr);
+      },
+      ClientConnectionMessage::LobbyGameMove => {
+        // TODO: send thru websocket ctx
+      },
+      ClientConnectionMessage::LobbyGameFinished => {
+        // TODO: send thru websocket ctx
+      },
+    }
   }
 }
 
@@ -56,18 +66,27 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for ClientConnection 
         if let Ok(client_message) = client_message {
           match client_message {
             ClientMessage::CreateLobby => {
-              // Send message to lobby manager
-              // Update lobby address
+              self.lobby_manager.do_send(LobbyManagerMessage::CreateLobby { user1_connection: ctx.address() });
             },
             ClientMessage::JoinLobby { lobby_id: lobby_id } => {
-              // Send message to lobby manager
-              // Update lobby address
+              self.lobby_manager.do_send(LobbyManagerMessage::JoinLobby {
+                lobby_id: lobby_id,
+                user2_connection: ctx.address()
+              });
             },
             ClientMessage::StartLobby => {
-              // Send start message to lobby?
+              if let Some(lobby) = &self.lobby {
+                lobby.do_send(LobbyMessage::ClientStartLobby);
+              } else {
+                // TODO: error handling
+              }
             },
             ClientMessage::PlayerMove { move_type: move_type } => {
-              // Send move message to lobby
+              if let Some(lobby) = &self.lobby {
+                lobby.do_send(LobbyMessage::ClientGameMove { move_type: move_type });
+              } else {
+                // TODO: error handling
+              }
             },
             _ => ()
           }

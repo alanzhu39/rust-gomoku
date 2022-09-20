@@ -27,7 +27,7 @@ async fn create_client_connection(req: HttpRequest, stream: web::Payload) -> Res
   match resp {
     Ok((client_connection_addr, http_response)) => {
       // TODO: error case on send
-      client_connection_manager.do_send(ClientConnectionManagerMessage::AddClientConnection{
+      client_connection_manager.do_send(ClientConnectionManagerMessage::AddClientConnection {
         session_token: session_token,
         client_connection_addr: client_connection_addr
       });

@@ -30,7 +30,7 @@ impl Handler<ClientConnectionManagerMessage> for ClientConnectionManager {
 
   fn handle(&mut self, msg: ClientConnectionManagerMessage, ctx: &mut Self::Context) -> Self::Result {
     match msg {
-      ClientConnectionManagerMessage::AddClientConnection{session_token, client_connection_addr} => {
+      ClientConnectionManagerMessage::AddClientConnection { session_token, client_connection_addr } => {
         self.client_connections_map.insert(session_token, client_connection_addr);
       },
       _ => {
