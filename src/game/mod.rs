@@ -1,6 +1,7 @@
 mod board;
 
-use board::{Board, PieceType};
+pub use board::PieceType;
+use board::Board;
 
 #[derive(Debug)]
 pub enum MoveType {
@@ -16,9 +17,9 @@ pub enum GameState {
 
 pub struct Game {
   board: Board,
-  current_turn: PieceType,
-  move_sequence: Vec<MoveType>,
-  game_state: GameState
+  pub current_turn: PieceType,
+  pub move_sequence: Vec<MoveType>,
+  pub game_state: GameState
 }
 
 impl Game {
@@ -46,13 +47,9 @@ impl Game {
         if self.board.has_five {
           self.set_game_win(self.current_turn);
         }
+        self.current_turn = self.current_turn.other();
       },
-      MoveType::Forfeit => self.set_game_win(
-        match self.current_turn {
-          PieceType::Black => PieceType::White,
-          PieceType::White => PieceType::Black
-        }
-      )
+      MoveType::Forfeit => self.set_game_win(self.current_turn.other())
     }
 
     // TODO: update move_sequence

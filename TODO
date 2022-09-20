@@ -4,6 +4,13 @@ TODO:
 In progress:
 - lobby/lobby manager implementation
 - game implementation (supporting moves)
+- Testing
+  - Player 1 client connection
+  - Create lobby (message via ws)
+  - Player 2 client connection
+  - Join lobby
+  - Start lobby (player 1 message)
+  - Send moves
 
 
 

@@ -45,6 +45,7 @@ impl Handler<ClientConnectionMessage> for ClientConnection {
     match msg {
       ClientConnectionMessage::LobbyJoined { lobby_addr: lobby_addr } => {
         self.lobby = Some(lobby_addr);
+        // TODO: send lobby state thru websocket
       },
       ClientConnectionMessage::LobbyGameMove => {
         // TODO: send thru websocket ctx

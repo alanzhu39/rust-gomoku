@@ -1,7 +1,7 @@
 use uuid::Uuid;
 
 use crate::api::message::*;
-use crate::game::MoveType;
+use crate::game::{Game, GameState, MoveType, PieceType};
 
 #[test]
 fn client_message_parsing_test() {
@@ -25,4 +25,54 @@ fn client_message_parsing_test() {
   assert!(matches!(
     ClientMessage::parse(String::from("PLAYER_MOVE::FORFEIT")),
     Ok(ClientMessage::PlayerMove{ move_type: MoveType::Forfeit})));
+}
+
+#[test]
+fn game_win_test() {
+  let mut game = Game::new();
+  assert!(matches!(
+    game.game_state,
+    GameState::InProgress));
+
+  game.make_move(MoveType::PlacePiece(0, 0)); // Black
+  game.make_move(MoveType::PlacePiece(1, 1));
+  game.make_move(MoveType::PlacePiece(0, 1)); // Black
+  game.make_move(MoveType::PlacePiece(3, 3));
+  game.make_move(MoveType::PlacePiece(0, 2)); // Black
+  game.make_move(MoveType::PlacePiece(5, 5));
+  game.make_move(MoveType::PlacePiece(0, 3)); // Black
+  game.make_move(MoveType::PlacePiece(7, 7));
+  game.make_move(MoveType::PlacePiece(0, 4)); // Black
+  assert!(matches!(
+    game.game_state,
+    GameState::Win(PieceType::Black)));
+
+  game = Game::new();
+  game.make_move(MoveType::PlacePiece(9, 9)); // Black
+  game.make_move(MoveType::PlacePiece(0, 0));
+  game.make_move(MoveType::PlacePiece(8, 8)); // Black
+  game.make_move(MoveType::PlacePiece(0, 3));
+  game.make_move(MoveType::PlacePiece(11, 11)); // Black
+  game.make_move(MoveType::PlacePiece(0, 5));
+  game.make_move(MoveType::PlacePiece(12, 12)); // Black
+  game.make_move(MoveType::PlacePiece(0, 7));
+  game.make_move(MoveType::PlacePiece(10, 10)); // Black
+  assert!(matches!(
+    game.game_state,
+    GameState::Win(PieceType::Black)));
+
+  game = Game::new();
+  game.make_move(MoveType::PlacePiece(0, 0));
+  game.make_move(MoveType::PlacePiece(9, 10)); // White
+  game.make_move(MoveType::PlacePiece(0, 3));
+  game.make_move(MoveType::PlacePiece(7, 8)); // White
+  game.make_move(MoveType::PlacePiece(0, 5));
+  game.make_move(MoveType::PlacePiece(6, 7)); // White
+  game.make_move(MoveType::PlacePiece(0, 7));
+  game.make_move(MoveType::PlacePiece(5, 6)); // White
+  game.make_move(MoveType::PlacePiece(0, 9));
+  game.make_move(MoveType::PlacePiece(8, 9)); // White
+  assert!(matches!(
+    game.game_state,
+    GameState::Win(PieceType::White)));
 }

@@ -51,11 +51,13 @@ impl Handler<LobbyMessage> for Lobby {
       LobbyMessage::ClientJoinLobby { user2_connection: user2_connection } => {
         // TODO: check existing
         self.user2_connection = Some(user2_connection.clone());
+        self.lobby_status = LobbyStatus::TwoPlayersWaiting;
         user2_connection.do_send(ClientConnectionMessage::LobbyJoined { lobby_addr: ctx.address() });
       },
       LobbyMessage::ClientStartLobby => {
         // TODO: check existing
-        self.game = Some(Game::new())
+        self.game = Some(Game::new());
+        self.lobby_status = LobbyStatus::GameStarted;
       },
       LobbyMessage::ClientGameMove { move_type: move_type } => {
         // TODO
