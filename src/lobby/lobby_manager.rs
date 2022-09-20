@@ -30,7 +30,7 @@ impl Handler<LobbyManagerMessage> for LobbyManager {
 
   fn handle(&mut self, msg: LobbyManagerMessage, ctx: &mut Self::Context) -> Self::Result {
     match msg {
-      LobbyManagerMessage::CreateLobby { user1_connection: user1_connection } => {
+      LobbyManagerMessage::CreateLobby { user_connection: user1_connection } => {
         // Create lobby
         let lobby_id = Uuid::new_v4();
         let is_user1_black = true;
@@ -42,9 +42,10 @@ impl Handler<LobbyManagerMessage> for LobbyManager {
         // Send message to client connection
         user1_connection.do_send(ClientConnectionMessage::LobbyJoined { lobby_addr: lobby_addr });
       },
-      LobbyManagerMessage::JoinLobby { lobby_id: lobby_id, user2_connection: user2_connection } => {
+      LobbyManagerMessage::JoinLobby { lobby_id: lobby_id, user_connection: user2_connection } => {
         // Send lobby join message
-          // Lobby sends message to client connection on successful join
+        let lobby_addr = self.lobbies_map.get(lobby_id).unwrap()
+          .do_send(LobbyMessage::ClientJoinLobby { user_connection: user2_connection });
       },
       CloseLobby => {
         // TODO

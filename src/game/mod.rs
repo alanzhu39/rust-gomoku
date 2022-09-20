@@ -18,7 +18,7 @@ pub enum GameState {
 pub struct Game {
   board: Board,
   pub current_turn: PieceType,
-  pub move_sequence: Vec<MoveType>,
+  move_sequence: Vec<(PieceType, MoveType)>,
   pub game_state: GameState
 }
 
@@ -43,15 +43,21 @@ impl Game {
 
     match move_type {
       MoveType::PlacePiece(x, y) => {
+        // Place piece
         self.board.place_piece(x, y, self.current_turn);
+
+        // Check win
         if self.board.has_five {
           self.set_game_win(self.current_turn);
         }
+
+        // Update move_sequence
+        self.move_sequence.push((self.current_turn.clone(), MoveType::PlacePiece(x, y)));
+
+        // Update current turn
         self.current_turn = self.current_turn.other();
       },
       MoveType::Forfeit => self.set_game_win(self.current_turn.other())
     }
-
-    // TODO: update move_sequence
   }
 }

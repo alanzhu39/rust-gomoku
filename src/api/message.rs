@@ -3,7 +3,7 @@ use uuid::Uuid;
 
 use crate::client_connection::{SessionToken, ClientConnection};
 use crate::lobby::{Lobby, LobbyId};
-use crate::game::MoveType;
+use crate::game::{PieceType, MoveType};
 
 #[derive(Debug)]
 pub enum ClientMessage {
@@ -89,21 +89,21 @@ pub enum ClientConnectionManagerMessage {
 
 pub enum ClientConnectionMessage {
   LobbyJoined { lobby_addr: Addr<Lobby> },
-  LobbyGameMove,
+  LobbyGameMove { piece_type: PieceType, move_type: MoveType },
   LobbyGameFinished
 }
 
 pub enum LobbyManagerMessage {
-  CreateLobby { user1_connection: Addr<ClientConnection> },
-  JoinLobby { lobby_id: LobbyId, user2_connection: Addr<ClientConnection> },
+  CreateLobby { user_connection: Addr<ClientConnection> },
+  JoinLobby { lobby_id: LobbyId, user_connection: Addr<ClientConnection> },
   CloseLobby
 }
 
 pub enum LobbyMessage {
-  ClientJoinLobby { user2_connection: Addr<ClientConnection> },
-  ClientStartLobby,
-  ClientGameMove { move_type: MoveType },
-  ClientLeaveLobby,
+  ClientJoinLobby { user_connection: Addr<ClientConnection> },
+  ClientStartLobby { user_connection: Addr<ClientConnection> },
+  ClientGameMove { move_type: MoveType, user_connection: Addr<ClientConnection> },
+  ClientLeaveLobby { user_connection: Addr<ClientConnection> },
   ClientRematch
 }
 

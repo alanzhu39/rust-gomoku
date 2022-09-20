@@ -48,22 +48,41 @@ impl Handler<LobbyMessage> for Lobby {
 
   fn handle(&mut self, msg: LobbyMessage, ctx: &mut Self::Context) -> Self::Result {
     match msg {
-      LobbyMessage::ClientJoinLobby { user2_connection: user2_connection } => {
+      LobbyMessage::ClientJoinLobby { user_connection: user2_connection } => {
         // TODO: check existing
         self.user2_connection = Some(user2_connection.clone());
         self.lobby_status = LobbyStatus::TwoPlayersWaiting;
         user2_connection.do_send(ClientConnectionMessage::LobbyJoined { lobby_addr: ctx.address() });
       },
-      LobbyMessage::ClientStartLobby => {
+      LobbyMessage::ClientStartLobby { user_connection: user_connection } => {
         // TODO: check existing
         self.game = Some(Game::new());
         self.lobby_status = LobbyStatus::GameStarted;
       },
-      LobbyMessage::ClientGameMove { move_type: move_type } => {
-        // TODO
+      LobbyMessage::ClientGameMove { move_type: move_type, user_connection: user_connection } => {
+        // TODO: verify lobby status
+        // Verify turn
+        let (current_user, other_user) = (is_user1_black && self.game.current_turn == PieceType::Black)
+            || (!is_user1_black && self.game.current_turn == PieceType::White)
+          ? (&self.user1_connection, &self.user2_connection) : (&self.user2_connection, &self.user1_connection);
+        if current_user.unwrap() != user_connection {
+          // TODO: error message
+          return;
+        }
+
         // Call game method
+        let piece_type = self.game.current_turn.clone();
+        self.game.make_move(move_type.clone());
+        // TODO: update lobby status
+
+        // Send client connection message
+        // TODO: check lobby status
+        other_user.unwrap().do_send(ClientConnectionMessage::LobbyGameMove {
+          piece_type: piece_type,
+          move_type: move_type.clone()
+        });
       },
-      LobbyMessage::ClientLeaveLobby => {
+      LobbyMessage::ClientLeaveLobby { user_connection: user_connection } => {
         // TODO
       },
       LobbyMessage::ClientRematch => {

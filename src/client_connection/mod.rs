@@ -67,24 +67,24 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for ClientConnection 
         if let Ok(client_message) = client_message {
           match client_message {
             ClientMessage::CreateLobby => {
-              self.lobby_manager.do_send(LobbyManagerMessage::CreateLobby { user1_connection: ctx.address() });
+              self.lobby_manager.do_send(LobbyManagerMessage::CreateLobby { user_connection: ctx.address() });
             },
             ClientMessage::JoinLobby { lobby_id: lobby_id } => {
               self.lobby_manager.do_send(LobbyManagerMessage::JoinLobby {
                 lobby_id: lobby_id,
-                user2_connection: ctx.address()
+                user_connection: ctx.address()
               });
             },
             ClientMessage::StartLobby => {
               if let Some(lobby) = &self.lobby {
-                lobby.do_send(LobbyMessage::ClientStartLobby);
+                lobby.do_send(LobbyMessage::ClientStartLobby { user_connection: ctx.address() });
               } else {
                 // TODO: error handling
               }
             },
             ClientMessage::PlayerMove { move_type: move_type } => {
               if let Some(lobby) = &self.lobby {
-                lobby.do_send(LobbyMessage::ClientGameMove { move_type: move_type });
+                lobby.do_send(LobbyMessage::ClientGameMove { move_type: move_type, user_connection: ctx.address() });
               } else {
                 // TODO: error handling
               }
