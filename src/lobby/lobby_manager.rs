@@ -4,7 +4,7 @@ use std::collections::HashMap;
 use uuid::Uuid;
 
 use super::Lobby;
-use crate::api::message::{ClientConnectionMessage, LobbyManagerMessage};
+use crate::api::message::{ClientConnectionMessage, LobbyMessage, LobbyManagerMessage};
 use crate::client_connection::ClientConnection;
 
 pub type LobbyId = Uuid;
@@ -37,14 +37,17 @@ impl Handler<LobbyManagerMessage> for LobbyManager {
         let lobby_addr = Lobby::new(lobby_id, user1_connection.clone(), is_user1_black, ctx.address()).start();
 
         // Update map
-        self.lobbies_map.insert(lobby_id, lobby_addr.clone());
+        self.lobbies_map.insert(lobby_id.clone(), lobby_addr.clone());
 
         // Send message to client connection
-        user1_connection.do_send(ClientConnectionMessage::LobbyJoined { lobby_addr: lobby_addr });
+        user1_connection.do_send(ClientConnectionMessage::LobbyJoined {
+          lobby_id: lobby_id.clone(),
+          lobby_addr: lobby_addr
+        });
       },
       LobbyManagerMessage::JoinLobby { lobby_id: lobby_id, user_connection: user2_connection } => {
         // Send lobby join message
-        let lobby_addr = self.lobbies_map.get(lobby_id).unwrap()
+        let lobby_addr = self.lobbies_map.get(&lobby_id).unwrap()
           .do_send(LobbyMessage::ClientJoinLobby { user_connection: user2_connection });
       },
       CloseLobby => {

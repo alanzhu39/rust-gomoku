@@ -3,7 +3,7 @@ mod board;
 pub use board::PieceType;
 use board::Board;
 
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug)]
 pub enum MoveType {
   PlacePiece(usize, usize),
   Forfeit

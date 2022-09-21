@@ -43,11 +43,12 @@ impl Handler<ClientConnectionMessage> for ClientConnection {
 
   fn handle(&mut self, msg: ClientConnectionMessage, ctx: &mut Self::Context) {
     match msg {
-      ClientConnectionMessage::LobbyJoined { lobby_addr: lobby_addr } => {
+      ClientConnectionMessage::LobbyJoined { lobby_id: lobby_id, lobby_addr: lobby_addr } => {
         self.lobby = Some(lobby_addr);
         // TODO: send lobby state thru websocket
+        ctx.text(lobby_id.simple().encode_lower(&mut Uuid::encode_buffer()));
       },
-      ClientConnectionMessage::LobbyGameMove => {
+      ClientConnectionMessage::LobbyGameMove { piece_type: piece_type, move_type: move_type }=> {
         // TODO: send thru websocket ctx
       },
       ClientConnectionMessage::LobbyGameFinished => {

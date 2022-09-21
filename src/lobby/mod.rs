@@ -3,7 +3,7 @@ mod lobby_manager;
 use actix::*;
 
 pub use lobby_manager::{LobbyManager, LobbyId};
-use crate::game::Game;
+use crate::game::{PieceType, Game};
 use crate::client_connection::ClientConnection;
 use crate::api::message::{ClientConnectionMessage, LobbyMessage};
 
@@ -62,17 +62,23 @@ impl Handler<LobbyMessage> for Lobby {
       LobbyMessage::ClientGameMove { move_type: move_type, user_connection: user_connection } => {
         // TODO: verify lobby status
         // Verify turn
-        let (current_user, other_user) = (is_user1_black && self.game.current_turn == PieceType::Black)
-            || (!is_user1_black && self.game.current_turn == PieceType::White)
-          ? (&self.user1_connection, &self.user2_connection) : (&self.user2_connection, &self.user1_connection);
+        let game = self.game.unwrap();
+        let (current_user, other_user) =
+          if (self.is_user1_black && game.current_turn == PieceType::Black)
+              || (!self.is_user1_black && game.current_turn == PieceType::White) {
+            (&self.user1_connection, &self.user2_connection)
+          } else {
+            (&self.user2_connection, &self.user1_connection)
+          };
+
         if current_user.unwrap() != user_connection {
           // TODO: error message
           return;
         }
 
         // Call game method
-        let piece_type = self.game.current_turn.clone();
-        self.game.make_move(move_type.clone());
+        let piece_type = game.current_turn.clone();
+        game.make_move(move_type.clone());
         // TODO: update lobby status
 
         // Send client connection message

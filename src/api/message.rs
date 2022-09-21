@@ -88,7 +88,7 @@ pub enum ClientConnectionManagerMessage {
 }
 
 pub enum ClientConnectionMessage {
-  LobbyJoined { lobby_addr: Addr<Lobby> },
+  LobbyJoined { lobby_id: LobbyId, lobby_addr: Addr<Lobby> },
   LobbyGameMove { piece_type: PieceType, move_type: MoveType },
   LobbyGameFinished
 }
