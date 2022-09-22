@@ -42,16 +42,20 @@ impl Handler<ClientConnectionMessage> for ClientConnection {
   type Result = ();
 
   fn handle(&mut self, msg: ClientConnectionMessage, ctx: &mut Self::Context) {
+    let message_text = msg.to_string();
     match msg {
       ClientConnectionMessage::LobbyJoined { lobby_id: lobby_id, lobby_addr: lobby_addr } => {
         self.lobby = Some(lobby_addr);
         // TODO: send lobby state thru websocket
+        ctx.text(message_text);
       },
       ClientConnectionMessage::LobbyGameMove { piece_type: piece_type, move_type: move_type }=> {
         // TODO: send thru websocket ctx
+        ctx.text(message_text);
       },
       ClientConnectionMessage::LobbyGameFinished => {
         // TODO: send thru websocket ctx
+        ctx.text(message_text);
       },
     }
   }
