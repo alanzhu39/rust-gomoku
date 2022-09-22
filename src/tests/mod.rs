@@ -1,4 +1,5 @@
 use uuid::Uuid;
+use std::fmt;
 
 use crate::api::message::*;
 use crate::game::{Game, GameState, MoveType, PieceType};
@@ -25,6 +26,26 @@ fn client_message_parsing_test() {
   assert!(matches!(
     ClientMessage::parse(String::from("PLAYER_MOVE::FORFEIT")),
     Ok(ClientMessage::PlayerMove{ move_type: MoveType::Forfeit})));
+}
+
+#[test]
+fn format_client_connection_message_test() {
+  assert_eq!(ClientConnectionMessage::LobbyGameMove {
+    piece_type: PieceType::Black,
+    move_type: MoveType::PlacePiece(0, 0)
+  }.to_string(), "GAME_MOVE::BLACK:a1");
+
+  assert_eq!(ClientConnectionMessage::LobbyGameMove {
+    piece_type: PieceType::Black,
+    move_type: MoveType::PlacePiece(5, 10)
+  }.to_string(), "GAME_MOVE::BLACK:f11");
+
+  assert_eq!(ClientConnectionMessage::LobbyGameMove {
+    piece_type: PieceType::White,
+    move_type: MoveType::PlacePiece(11, 1)
+  }.to_string(), "GAME_MOVE::WHITE:l2");
+
+  assert_eq!(ClientConnectionMessage::LobbyGameFinished.to_string(), "GAME_FINISHED");
 }
 
 #[test]

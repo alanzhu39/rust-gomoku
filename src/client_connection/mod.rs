@@ -46,7 +46,6 @@ impl Handler<ClientConnectionMessage> for ClientConnection {
       ClientConnectionMessage::LobbyJoined { lobby_id: lobby_id, lobby_addr: lobby_addr } => {
         self.lobby = Some(lobby_addr);
         // TODO: send lobby state thru websocket
-        ctx.text(lobby_id.simple().encode_lower(&mut Uuid::encode_buffer()));
       },
       ClientConnectionMessage::LobbyGameMove { piece_type: piece_type, move_type: move_type }=> {
         // TODO: send thru websocket ctx

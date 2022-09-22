@@ -37,6 +37,18 @@ impl Lobby {
       lobby_manager: lobby_manager
     }
   }
+
+  pub fn new_empty(lobby_id: LobbyId, lobby_manager: Addr<LobbyManager>) -> Lobby {
+    Lobby {
+      lobby_id: lobby_id,
+      user1_connection: None,
+      user2_connection: None,
+      is_user1_black: true,
+      lobby_status: LobbyStatus::OnePlayerWaiting,
+      game: None,
+      lobby_manager: lobby_manager
+    }
+  }
 }
 
 impl Actor for Lobby {
@@ -52,7 +64,10 @@ impl Handler<LobbyMessage> for Lobby {
         // TODO: check existing
         self.user2_connection = Some(user2_connection.clone());
         self.lobby_status = LobbyStatus::TwoPlayersWaiting;
-        user2_connection.do_send(ClientConnectionMessage::LobbyJoined { lobby_addr: ctx.address() });
+        user2_connection.do_send(ClientConnectionMessage::LobbyJoined {
+          lobby_id: self.lobby_id.clone(),
+          lobby_addr: ctx.address()
+        });
       },
       LobbyMessage::ClientStartLobby { user_connection: user_connection } => {
         // TODO: check existing
@@ -62,13 +77,13 @@ impl Handler<LobbyMessage> for Lobby {
       LobbyMessage::ClientGameMove { move_type: move_type, user_connection: user_connection } => {
         // TODO: verify lobby status
         // Verify turn
-        let game = self.game.unwrap();
+        let game = self.game.as_mut().unwrap();
         let (current_user, other_user) =
-          if (self.is_user1_black && game.current_turn == PieceType::Black)
-              || (!self.is_user1_black && game.current_turn == PieceType::White) {
-            (&self.user1_connection, &self.user2_connection)
+          if (self.is_user1_black && matches!(game.current_turn, PieceType::Black))
+              || (!self.is_user1_black && matches!(game.current_turn, PieceType::White)) {
+            (self.user1_connection.clone(), self.user2_connection.clone())
           } else {
-            (&self.user2_connection, &self.user1_connection)
+            (self.user2_connection.clone(), self.user1_connection.clone())
           };
 
         if current_user.unwrap() != user_connection {

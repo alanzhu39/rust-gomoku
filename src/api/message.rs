@@ -1,5 +1,6 @@
 use actix::*;
 use uuid::Uuid;
+use std::fmt;
 
 use crate::client_connection::{SessionToken, ClientConnection};
 use crate::lobby::{Lobby, LobbyId};
@@ -91,6 +92,28 @@ pub enum ClientConnectionMessage {
   LobbyJoined { lobby_id: LobbyId, lobby_addr: Addr<Lobby> },
   LobbyGameMove { piece_type: PieceType, move_type: MoveType },
   LobbyGameFinished
+}
+
+impl fmt::Display for ClientConnectionMessage {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    match self {
+      ClientConnectionMessage::LobbyJoined { lobby_id: lobby_id, .. } => {
+        write!(f, "LOBBY_JOINED::{}", lobby_id.simple().encode_lower(&mut Uuid::encode_buffer()))
+      },
+      ClientConnectionMessage::LobbyGameMove { piece_type: piece_type, move_type: move_type }=> {
+        let piece_str = if let PieceType::Black = piece_type { "BLACK" } else { "WHITE" };
+
+        let piece_coord = if let MoveType::PlacePiece(x, y) = move_type { (x, y) } else { panic!("bad move type") };
+        let row = char::from_u32((piece_coord.0 + ('a' as usize)).try_into().unwrap()).unwrap();
+        let col = piece_coord.1 + 1;
+
+        write!(f, "GAME_MOVE::{}:{}{}", piece_str, row, col)
+      },
+      ClientConnectionMessage::LobbyGameFinished => {
+        write!(f, "GAME_FINISHED")
+      },
+    }
+  }
 }
 
 pub enum LobbyManagerMessage {
