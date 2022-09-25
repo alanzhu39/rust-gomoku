@@ -90,6 +90,7 @@ pub enum ClientConnectionManagerMessage {
 
 pub enum ClientConnectionMessage {
   LobbyJoined { lobby_id: LobbyId, lobby_addr: Addr<Lobby> },
+  LobbyStarted { lobby_id: LobbyId },
   LobbyGameMove { piece_type: PieceType, move_type: MoveType },
   LobbyGameFinished
 }
@@ -99,6 +100,9 @@ impl fmt::Display for ClientConnectionMessage {
     match self {
       ClientConnectionMessage::LobbyJoined { lobby_id: lobby_id, .. } => {
         write!(f, "LOBBY_JOINED::{}", lobby_id.simple().encode_lower(&mut Uuid::encode_buffer()))
+      },
+      ClientConnectionMessage::LobbyStarted { lobby_id: lobby_id } => {
+        write!(f, "LOBBY_STARTED::{}", lobby_id.simple().encode_lower(&mut Uuid::encode_buffer()))
       },
       ClientConnectionMessage::LobbyGameMove { piece_type: piece_type, move_type: move_type }=> {
         let piece_str = if let PieceType::Black = piece_type { "BLACK" } else { "WHITE" };

@@ -71,8 +71,17 @@ impl Handler<LobbyMessage> for Lobby {
       },
       LobbyMessage::ClientStartLobby { user_connection: user_connection } => {
         // TODO: check existing
+        assert_eq!(&user_connection, self.user1_connection.as_ref().unwrap());
+
         self.game = Some(Game::new());
         self.lobby_status = LobbyStatus::GameStarted;
+
+        self.user1_connection.as_ref().unwrap().do_send(ClientConnectionMessage::LobbyStarted {
+          lobby_id: self.lobby_id.clone()
+        });
+        self.user2_connection.as_ref().unwrap().do_send(ClientConnectionMessage::LobbyStarted {
+          lobby_id: self.lobby_id.clone()
+        });
       },
       LobbyMessage::ClientGameMove { move_type: move_type, user_connection: user_connection } => {
         // TODO: verify lobby status
