@@ -1,6 +1,18 @@
 TODO:
 - Fix ClientConnectionMessage::LobbyGameMove
 
+9/25/22:
+In progress:
+- Game moves messages
+- Testing some flows
+  - FE changes for sending messages
+  - Lobby create works, lobby join works
+
+Finished:
+- Lobby start message
+
+
+
 9/22/22:
 In progress:
 - Lobby start messages
