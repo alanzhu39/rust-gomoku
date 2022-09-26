@@ -45,7 +45,15 @@ fn format_client_connection_message_test() {
     move_type: MoveType::PlacePiece(11, 1)
   }.to_string(), "GAME_MOVE::WHITE:l2");
 
-  assert_eq!(ClientConnectionMessage::LobbyGameFinished.to_string(), "GAME_FINISHED");
+  assert_eq!(ClientConnectionMessage::LobbyGameMove {
+    piece_type: PieceType::Black,
+    move_type: MoveType::Resign
+  }.to_string(), "GAME_MOVE::BLACK:RESIGN");
+
+  assert_eq!(ClientConnectionMessage::LobbyGameMove {
+    piece_type: PieceType::White,
+    move_type: MoveType::Resign
+  }.to_string(), "GAME_MOVE::WHITE:RESIGN");
 }
 
 #[test]
@@ -55,44 +63,44 @@ fn game_win_test() {
     game.game_state,
     GameState::InProgress));
 
-  game.make_move(MoveType::PlacePiece(0, 0)); // Black
-  game.make_move(MoveType::PlacePiece(1, 1));
-  game.make_move(MoveType::PlacePiece(0, 1)); // Black
-  game.make_move(MoveType::PlacePiece(3, 3));
-  game.make_move(MoveType::PlacePiece(0, 2)); // Black
-  game.make_move(MoveType::PlacePiece(5, 5));
-  game.make_move(MoveType::PlacePiece(0, 3)); // Black
-  game.make_move(MoveType::PlacePiece(7, 7));
-  game.make_move(MoveType::PlacePiece(0, 4)); // Black
+  game.make_move(PieceType::Black, MoveType::PlacePiece(0, 0)); // Black
+  game.make_move(PieceType::White, MoveType::PlacePiece(1, 1));
+  game.make_move(PieceType::Black, MoveType::PlacePiece(0, 1)); // Black
+  game.make_move(PieceType::White, MoveType::PlacePiece(3, 3));
+  game.make_move(PieceType::Black, MoveType::PlacePiece(0, 2)); // Black
+  game.make_move(PieceType::White, MoveType::PlacePiece(5, 5));
+  game.make_move(PieceType::Black, MoveType::PlacePiece(0, 3)); // Black
+  game.make_move(PieceType::White, MoveType::PlacePiece(7, 7));
+  game.make_move(PieceType::Black, MoveType::PlacePiece(0, 4)); // Black
   assert!(matches!(
     game.game_state,
     GameState::Win(PieceType::Black)));
 
   game = Game::new();
-  game.make_move(MoveType::PlacePiece(9, 9)); // Black
-  game.make_move(MoveType::PlacePiece(0, 0));
-  game.make_move(MoveType::PlacePiece(8, 8)); // Black
-  game.make_move(MoveType::PlacePiece(0, 3));
-  game.make_move(MoveType::PlacePiece(11, 11)); // Black
-  game.make_move(MoveType::PlacePiece(0, 5));
-  game.make_move(MoveType::PlacePiece(12, 12)); // Black
-  game.make_move(MoveType::PlacePiece(0, 7));
-  game.make_move(MoveType::PlacePiece(10, 10)); // Black
+  game.make_move(PieceType::Black, MoveType::PlacePiece(9, 9)); // Black
+  game.make_move(PieceType::White, MoveType::PlacePiece(0, 0));
+  game.make_move(PieceType::Black, MoveType::PlacePiece(8, 8)); // Black
+  game.make_move(PieceType::White, MoveType::PlacePiece(0, 3));
+  game.make_move(PieceType::Black, MoveType::PlacePiece(11, 11)); // Black
+  game.make_move(PieceType::White, MoveType::PlacePiece(0, 5));
+  game.make_move(PieceType::Black, MoveType::PlacePiece(12, 12)); // Black
+  game.make_move(PieceType::White, MoveType::PlacePiece(0, 7));
+  game.make_move(PieceType::Black, MoveType::PlacePiece(10, 10)); // Black
   assert!(matches!(
     game.game_state,
     GameState::Win(PieceType::Black)));
 
   game = Game::new();
-  game.make_move(MoveType::PlacePiece(0, 0));
-  game.make_move(MoveType::PlacePiece(9, 10)); // White
-  game.make_move(MoveType::PlacePiece(0, 3));
-  game.make_move(MoveType::PlacePiece(7, 8)); // White
-  game.make_move(MoveType::PlacePiece(0, 5));
-  game.make_move(MoveType::PlacePiece(6, 7)); // White
-  game.make_move(MoveType::PlacePiece(0, 7));
-  game.make_move(MoveType::PlacePiece(5, 6)); // White
-  game.make_move(MoveType::PlacePiece(0, 9));
-  game.make_move(MoveType::PlacePiece(8, 9)); // White
+  game.make_move(PieceType::Black, MoveType::PlacePiece(0, 0));
+  game.make_move(PieceType::White, MoveType::PlacePiece(9, 10)); // White
+  game.make_move(PieceType::Black, MoveType::PlacePiece(0, 3));
+  game.make_move(PieceType::White, MoveType::PlacePiece(7, 8)); // White
+  game.make_move(PieceType::Black, MoveType::PlacePiece(0, 5));
+  game.make_move(PieceType::White, MoveType::PlacePiece(6, 7)); // White
+  game.make_move(PieceType::Black, MoveType::PlacePiece(0, 7));
+  game.make_move(PieceType::White, MoveType::PlacePiece(5, 6)); // White
+  game.make_move(PieceType::Black, MoveType::PlacePiece(0, 9));
+  game.make_move(PieceType::White, MoveType::PlacePiece(8, 9)); // White
   assert!(matches!(
     game.game_state,
     GameState::Win(PieceType::White)));

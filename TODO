@@ -7,9 +7,8 @@ TODO:
 
 9/25/22:
 In progress:
-- messaging protocol
-  - game results
-  - error messages
+- FE architecture (API in working state)
+- Error messages: should probably include error messages so FE can handle different responses
 - logging
 
 Messaging protocol brainstorm:
@@ -21,8 +20,12 @@ Messaging protocol brainstorm:
   - if client gets no ack then game is moot anyways?
 
 Finished:
+- Resign messages
 - Lobby start message
 - Piece moves coming thru
+- messaging protocol
+  - game results
+  - error messages
 - FE testing:
   - Need to maintain just one WS in state
   - Lobby create works, lobby join works

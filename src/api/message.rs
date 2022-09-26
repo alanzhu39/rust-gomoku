@@ -108,11 +108,17 @@ impl fmt::Display for ClientConnectionMessage {
       ClientConnectionMessage::LobbyGameMove { piece_type: piece_type, move_type: move_type } => {
         let piece_str = if let PieceType::Black = piece_type { "BLACK" } else { "WHITE" };
 
-        let piece_coord = if let MoveType::PlacePiece(x, y) = move_type { (x, y) } else { panic!("bad move type") };
-        let row = char::from_u32((piece_coord.0 + ('a' as usize)).try_into().unwrap()).unwrap();
-        let col = piece_coord.1 + 1;
+        match move_type {
+          MoveType::PlacePiece(x, y) => {
+            let row = char::from_u32((x + ('a' as usize)).try_into().unwrap()).unwrap();
+            let col = y + 1;
 
-        write!(f, "GAME_MOVE::{}:{}{}", piece_str, row, col)
+            write!(f, "GAME_MOVE::{}:{}{}", piece_str, row, col)
+          },
+          MoveType::Resign => {
+            write!(f, "GAME_MOVE::{}:RESIGN", piece_str)
+          }
+        }
       },
     }
   }
