@@ -150,7 +150,10 @@ Features:
 - timed games
 - display move order toggle
 - input modes (confirm move, instant move)
+- premoves
 - ghost mode (to inspect lines)
 - share a game
+- evaluation bar
 
 - user accounts
+- ELO system

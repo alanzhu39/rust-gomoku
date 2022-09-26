@@ -9,6 +9,7 @@ TODO:
 In progress:
 - FE architecture (API in working state)
 - Error messages: should probably include error messages so FE can handle different responses
+- Closing lobbies/connections
 - logging
 
 Messaging protocol brainstorm:
