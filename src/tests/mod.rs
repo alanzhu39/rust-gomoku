@@ -24,8 +24,8 @@ fn client_message_parsing_test() {
     Ok(ClientMessage::PlayerMove{ move_type: MoveType::PlacePiece(14, 14)})));
 
   assert!(matches!(
-    ClientMessage::parse(String::from("PLAYER_MOVE::FORFEIT")),
-    Ok(ClientMessage::PlayerMove{ move_type: MoveType::Forfeit})));
+    ClientMessage::parse(String::from("PLAYER_MOVE::RESIGN")),
+    Ok(ClientMessage::PlayerMove{ move_type: MoveType::Resign})));
 }
 
 #[test]

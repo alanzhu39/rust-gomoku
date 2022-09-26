@@ -1,15 +1,32 @@
 TODO:
+- Assert should only be used to check logical validity of program
+  - for example, invariants, if an if condition guarantees something we can add an assertion in the last implicit certain condition
+  - should assume that asserts are never executed
+  - sort of like treating asserts as docs or comments
 - Fix ClientConnectionMessage::LobbyGameMove
 
 9/25/22:
 In progress:
-- Game moves messages
-- Testing some flows
-  - FE changes for sending messages
-  - Lobby create works, lobby join works
+- messaging protocol
+  - game results
+  - error messages
+- logging
+
+Messaging protocol brainstorm:
+- I think it's ok for invalid messages to just be ignored
+  - eg. out of turn piece moves, bad lobby create/join messages, etc.
+- I think we don't need to send lobby game finished message, just send moves and let clients figure out state
+  - Lobby/game will still have finished state in server
+- I think it's ok to not ack moves?
+  - if client gets no ack then game is moot anyways?
 
 Finished:
 - Lobby start message
+- Piece moves coming thru
+- FE testing:
+  - Need to maintain just one WS in state
+  - Lobby create works, lobby join works
+  - FE changes for sending messages
 
 
 

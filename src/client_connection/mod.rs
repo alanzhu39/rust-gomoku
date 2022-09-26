@@ -43,60 +43,54 @@ impl Handler<ClientConnectionMessage> for ClientConnection {
 
   fn handle(&mut self, msg: ClientConnectionMessage, ctx: &mut Self::Context) {
     let message_text = msg.to_string();
+
     match msg {
       ClientConnectionMessage::LobbyJoined { lobby_addr: lobby_addr, .. } => {
         self.lobby = Some(lobby_addr);
-        // TODO: send lobby state thru websocket
-        ctx.text(message_text);
       },
-      ClientConnectionMessage::LobbyStarted { .. } => {
-        // TODO: send lobby state thru websocket
-        ctx.text(message_text);
-      },
-      ClientConnectionMessage::LobbyGameMove { .. }=> {
-        // TODO: send thru websocket ctx
-        ctx.text(message_text);
-      },
-      ClientConnectionMessage::LobbyGameFinished => {
-        // TODO: send thru websocket ctx
-        ctx.text(message_text);
-      },
+      _ => ()
     }
+
+    ctx.text(message_text);
   }
 }
 
 impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for ClientConnection {
   fn handle(&mut self, msg: Result<ws::Message, ws::ProtocolError>, ctx: &mut Self::Context) {
-    println!("{:?}", msg);
     match msg {
       Ok(ws::Message::Ping(msg)) => ctx.pong(&msg),
       Ok(ws::Message::Text(text)) => {
-        let client_message = ClientMessage::parse(String::from(text));
-        if let Ok(client_message) = client_message {
+        println!("Message: {}", text);
+
+        if let Ok(client_message) = ClientMessage::parse(String::from(text)) {
           match client_message {
             ClientMessage::CreateLobby => {
-              self.lobby_manager.do_send(LobbyManagerMessage::CreateLobby { user_connection: ctx.address() });
+              if let None = self.lobby {
+                self.lobby_manager.do_send(LobbyManagerMessage::CreateLobby { user_connection: ctx.address() });
+              }
             },
+            
             ClientMessage::JoinLobby { lobby_id: lobby_id } => {
-              self.lobby_manager.do_send(LobbyManagerMessage::JoinLobby {
-                lobby_id: lobby_id,
-                user_connection: ctx.address()
-              });
+              if let None = self.lobby {
+                self.lobby_manager.do_send(LobbyManagerMessage::JoinLobby {
+                  lobby_id: lobby_id,
+                  user_connection: ctx.address()
+                });
+              }
             },
+
             ClientMessage::StartLobby => {
               if let Some(lobby) = &self.lobby {
                 lobby.do_send(LobbyMessage::ClientStartLobby { user_connection: ctx.address() });
-              } else {
-                // TODO: error handling
               }
             },
+
             ClientMessage::PlayerMove { move_type: move_type } => {
               if let Some(lobby) = &self.lobby {
                 lobby.do_send(LobbyMessage::ClientGameMove { move_type: move_type, user_connection: ctx.address() });
-              } else {
-                // TODO: error handling
               }
             },
+
             _ => ()
           }
         }

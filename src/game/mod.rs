@@ -6,7 +6,7 @@ use board::Board;
 #[derive(Copy, Clone, Debug)]
 pub enum MoveType {
   PlacePiece(usize, usize),
-  Forfeit
+  Resign
 }
 
 pub enum GameState {
@@ -38,11 +38,19 @@ impl Game {
     self.game_state = GameState::Win(piece_type);
   }
 
-  pub fn make_move(&mut self, move_type: MoveType) {
-    assert!(matches!(self.game_state, GameState::InProgress), "Game is already over!");
+  pub fn make_move(&mut self, piece_type: PieceType, move_type: MoveType) {
+    if !matches!(self.game_state, GameState::InProgress) {
+      eprintln!("Game is already over!");
+      return;
+    }
 
     match move_type {
       MoveType::PlacePiece(x, y) => {
+        if piece_type != self.current_turn {
+          eprintln!("Must be current turn to place piece!");
+          return;
+        }
+
         // Place piece
         self.board.place_piece(x, y, self.current_turn);
 
@@ -57,7 +65,7 @@ impl Game {
         // Update current turn
         self.current_turn = self.current_turn.other();
       },
-      MoveType::Forfeit => self.set_game_win(self.current_turn.other())
+      MoveType::Resign => self.set_game_win(piece_type.other())
     }
   }
 }

@@ -3,10 +3,11 @@ mod lobby_manager;
 use actix::*;
 
 pub use lobby_manager::{LobbyManager, LobbyId};
-use crate::game::{PieceType, Game};
+use crate::game::{PieceType, GameState, Game};
 use crate::client_connection::ClientConnection;
 use crate::api::message::{ClientConnectionMessage, LobbyMessage};
 
+#[derive(Debug)]
 enum LobbyStatus {
   OnePlayerWaiting,
   TwoPlayersWaiting,
@@ -61,21 +62,41 @@ impl Handler<LobbyMessage> for Lobby {
   fn handle(&mut self, msg: LobbyMessage, ctx: &mut Self::Context) -> Self::Result {
     match msg {
       LobbyMessage::ClientJoinLobby { user_connection: user2_connection } => {
-        // TODO: check existing
+        // check lobby status
+        if !matches!(self.lobby_status, LobbyStatus::OnePlayerWaiting) {
+          eprintln!("Cannot join lobby with status {:?}!", self.lobby_status);
+          return;
+        }
+        
+        // Update lobby
         self.user2_connection = Some(user2_connection.clone());
         self.lobby_status = LobbyStatus::TwoPlayersWaiting;
+
+        // Send lobby joined message
         user2_connection.do_send(ClientConnectionMessage::LobbyJoined {
           lobby_id: self.lobby_id.clone(),
           lobby_addr: ctx.address()
         });
       },
-      LobbyMessage::ClientStartLobby { user_connection: user_connection } => {
-        // TODO: check existing
-        assert_eq!(&user_connection, self.user1_connection.as_ref().unwrap());
 
+      LobbyMessage::ClientStartLobby { user_connection: user_connection } => {
+        // check lobby status
+        if !matches!(self.lobby_status, LobbyStatus::TwoPlayersWaiting) {
+          eprintln!("Cannot start lobby with status {:?}!", self.lobby_status);
+          return;
+        }
+
+        // Check user connection
+        if &user_connection != self.user1_connection.as_ref().unwrap() {
+          eprintln!("Must be lobby creator to start lobby!");
+          return;
+        }
+
+        // Start game
         self.game = Some(Game::new());
         self.lobby_status = LobbyStatus::GameStarted;
 
+        // Send lobby started messsages
         self.user1_connection.as_ref().unwrap().do_send(ClientConnectionMessage::LobbyStarted {
           lobby_id: self.lobby_id.clone()
         });
@@ -83,38 +104,47 @@ impl Handler<LobbyMessage> for Lobby {
           lobby_id: self.lobby_id.clone()
         });
       },
-      LobbyMessage::ClientGameMove { move_type: move_type, user_connection: user_connection } => {
-        // TODO: verify lobby status
-        // Verify turn
-        let game = self.game.as_mut().unwrap();
-        let (current_user, other_user) =
-          if (self.is_user1_black && matches!(game.current_turn, PieceType::Black))
-              || (!self.is_user1_black && matches!(game.current_turn, PieceType::White)) {
-            (self.user1_connection.clone(), self.user2_connection.clone())
-          } else {
-            (self.user2_connection.clone(), self.user1_connection.clone())
-          };
 
-        if current_user.unwrap() != user_connection {
-          // TODO: error message
+      LobbyMessage::ClientGameMove { move_type: move_type, user_connection: user_connection } => {
+        // verify lobby status
+        if !matches!(self.lobby_status, LobbyStatus::GameStarted) {
+          eprintln!("Cannot make game moves in lobby with status {:?}!", self.lobby_status);
           return;
         }
 
+        // Get user piece type
+        let game = self.game.as_mut().unwrap();
+        let is_user1 = user_connection.eq(self.user1_connection.as_ref().unwrap());
+        let user_piece_type =
+          if (self.is_user1_black && is_user1) || (!self.is_user1_black && !is_user1) {
+            PieceType::Black
+          } else {
+            PieceType::White
+          };
+
         // Call game method
-        let piece_type = game.current_turn.clone();
-        game.make_move(move_type.clone());
-        // TODO: update lobby status
+        game.make_move(user_piece_type, move_type.clone());
+
+        // Update lobby status
+        match game.game_state {
+          GameState::Win(_) | GameState::Draw => {
+            self.lobby_status = LobbyStatus::GameFinished;
+          },
+          _ => ()
+        }
 
         // Send client connection message
-        // TODO: check lobby status
+        let other_user = if is_user1 { self.user2_connection.clone() } else { self.user1_connection.clone() };
         other_user.unwrap().do_send(ClientConnectionMessage::LobbyGameMove {
-          piece_type: piece_type,
+          piece_type: user_piece_type,
           move_type: move_type.clone()
         });
       },
+
       LobbyMessage::ClientLeaveLobby { user_connection: user_connection } => {
         // TODO
       },
+
       LobbyMessage::ClientRematch => {
         // TODO
       }

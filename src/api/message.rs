@@ -72,8 +72,8 @@ impl ClientMessage {
           Err(ParsingError)
         }
       },
-      "FORFEIT" => {
-        Ok(MoveType::Forfeit)
+      "RESIGN" => {
+        Ok(MoveType::Resign)
       },
       _ => Err(ParsingError)
     }
@@ -91,8 +91,7 @@ pub enum ClientConnectionManagerMessage {
 pub enum ClientConnectionMessage {
   LobbyJoined { lobby_id: LobbyId, lobby_addr: Addr<Lobby> },
   LobbyStarted { lobby_id: LobbyId },
-  LobbyGameMove { piece_type: PieceType, move_type: MoveType },
-  LobbyGameFinished
+  LobbyGameMove { piece_type: PieceType, move_type: MoveType }
 }
 
 impl fmt::Display for ClientConnectionMessage {
@@ -101,10 +100,12 @@ impl fmt::Display for ClientConnectionMessage {
       ClientConnectionMessage::LobbyJoined { lobby_id: lobby_id, .. } => {
         write!(f, "LOBBY_JOINED::{}", lobby_id.simple().encode_lower(&mut Uuid::encode_buffer()))
       },
+
       ClientConnectionMessage::LobbyStarted { lobby_id: lobby_id } => {
         write!(f, "LOBBY_STARTED::{}", lobby_id.simple().encode_lower(&mut Uuid::encode_buffer()))
       },
-      ClientConnectionMessage::LobbyGameMove { piece_type: piece_type, move_type: move_type }=> {
+
+      ClientConnectionMessage::LobbyGameMove { piece_type: piece_type, move_type: move_type } => {
         let piece_str = if let PieceType::Black = piece_type { "BLACK" } else { "WHITE" };
 
         let piece_coord = if let MoveType::PlacePiece(x, y) = move_type { (x, y) } else { panic!("bad move type") };
@@ -112,9 +113,6 @@ impl fmt::Display for ClientConnectionMessage {
         let col = piece_coord.1 + 1;
 
         write!(f, "GAME_MOVE::{}:{}{}", piece_str, row, col)
-      },
-      ClientConnectionMessage::LobbyGameFinished => {
-        write!(f, "GAME_FINISHED")
       },
     }
   }

@@ -1,4 +1,4 @@
-#[derive(Copy, Clone)]
+#[derive(Debug, Eq, PartialEq, Copy, Clone)]
 pub enum PieceType {
   Black,
   White
@@ -35,7 +35,10 @@ impl Board {
   }
 
   pub fn place_piece(&mut self, x: usize, y: usize, piece_type: PieceType) {
-    assert!(x < Board::SIZE_LIMIT && y < Board::SIZE_LIMIT, "Invalid piece coordinates!");
+    if x >= Board::SIZE_LIMIT || y >= Board::SIZE_LIMIT {
+      eprintln!("Invalid piece coordinates!");
+      return;
+    }
 
     let piece_code: u8 = match piece_type {
         PieceType::Black => 1,
@@ -43,7 +46,9 @@ impl Board {
       };
     
     let grid_index = Board::get_grid_index(x, y);
-    assert!(self.grid[grid_index] == 0, "Board is not empty at location ({}, {})", x, y);
+    if self.grid[grid_index] != 0 {
+      eprintln!("Board is not empty at location ({}, {})", x, y);
+    }
 
     self.grid[grid_index] = piece_code;
 

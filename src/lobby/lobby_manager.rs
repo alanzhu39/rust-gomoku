@@ -45,11 +45,13 @@ impl Handler<LobbyManagerMessage> for LobbyManager {
           lobby_addr: lobby_addr
         });
       },
+
       LobbyManagerMessage::JoinLobby { lobby_id: lobby_id, user_connection: user2_connection } => {
         // Send lobby join message
         let lobby_addr = self.lobbies_map.get(&lobby_id).unwrap()
           .do_send(LobbyMessage::ClientJoinLobby { user_connection: user2_connection });
       },
+
       CloseLobby => {
         // TODO
       }
