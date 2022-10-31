@@ -8,7 +8,7 @@ use crate::client_connection::ClientConnection;
 use crate::api::message::{ClientConnectionMessage, LobbyMessage};
 
 #[derive(Debug)]
-enum LobbyStatus {
+pub enum LobbyStatus {
   OnePlayerWaiting,
   TwoPlayersWaiting,
   GameStarted,
@@ -72,9 +72,16 @@ impl Handler<LobbyMessage> for Lobby {
         self.user2_connection = Some(user2_connection.clone());
         self.lobby_status = LobbyStatus::TwoPlayersWaiting;
 
-        // Send lobby joined message
+        // Send lobby joined messages
         user2_connection.do_send(ClientConnectionMessage::LobbyJoined {
           lobby_id: self.lobby_id.clone(),
+          lobby_status: LobbyStatus::TwoPlayersWaiting,
+          lobby_addr: ctx.address()
+        });
+
+        self.user1_connection.as_ref().unwrap().do_send(ClientConnectionMessage::LobbyJoined {
+          lobby_id: self.lobby_id.clone(),
+          lobby_status: LobbyStatus::TwoPlayersWaiting,
           lobby_addr: ctx.address()
         });
       },

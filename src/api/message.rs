@@ -3,7 +3,7 @@ use uuid::Uuid;
 use std::fmt;
 
 use crate::client_connection::{SessionToken, ClientConnection};
-use crate::lobby::{Lobby, LobbyId};
+use crate::lobby::{Lobby, LobbyId, LobbyStatus};
 use crate::game::{PieceType, MoveType};
 
 #[derive(Debug)]
@@ -89,7 +89,7 @@ pub enum ClientConnectionManagerMessage {
 }
 
 pub enum ClientConnectionMessage {
-  LobbyJoined { lobby_id: LobbyId, lobby_addr: Addr<Lobby> },
+  LobbyJoined { lobby_id: LobbyId, lobby_status: LobbyStatus, lobby_addr: Addr<Lobby> },
   LobbyStarted { lobby_id: LobbyId },
   LobbyGameMove { piece_type: PieceType, move_type: MoveType }
 }
@@ -97,8 +97,8 @@ pub enum ClientConnectionMessage {
 impl fmt::Display for ClientConnectionMessage {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
     match self {
-      ClientConnectionMessage::LobbyJoined { lobby_id: lobby_id, .. } => {
-        write!(f, "LOBBY_JOINED::{}", lobby_id.simple().encode_lower(&mut Uuid::encode_buffer()))
+      ClientConnectionMessage::LobbyJoined { lobby_id: lobby_id, lobby_status: lobby_status, .. } => {
+        write!(f, "LOBBY_JOINED::{}:{:?}", lobby_id.simple().encode_lower(&mut Uuid::encode_buffer()), lobby_status)
       },
 
       ClientConnectionMessage::LobbyStarted { lobby_id: lobby_id } => {

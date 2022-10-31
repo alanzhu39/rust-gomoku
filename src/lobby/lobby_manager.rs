@@ -3,7 +3,7 @@ use actix::*;
 use std::collections::HashMap;
 use uuid::Uuid;
 
-use super::Lobby;
+use super::{Lobby, LobbyStatus};
 use crate::api::message::{ClientConnectionMessage, LobbyMessage, LobbyManagerMessage};
 use crate::client_connection::ClientConnection;
 
@@ -42,6 +42,7 @@ impl Handler<LobbyManagerMessage> for LobbyManager {
         // Send message to client connection
         user1_connection.do_send(ClientConnectionMessage::LobbyJoined {
           lobby_id: lobby_id.clone(),
+          lobby_status: LobbyStatus::OnePlayerWaiting,
           lobby_addr: lobby_addr
         });
       },
