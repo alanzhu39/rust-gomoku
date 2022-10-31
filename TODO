@@ -5,6 +5,13 @@ TODO:
   - sort of like treating asserts as docs or comments
 - Fix ClientConnectionMessage::LobbyGameMove
 
+10/30/22:
+TODO:
+- Update lobby joined message to now include lobby state:
+  - LOBBY_JOINED::<lobby_id>:<lobby_status>:<player1_id>:<player2_id>
+
+
+
 9/25/22:
 In progress:
 - FE architecture (API in working state)

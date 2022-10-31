@@ -13,10 +13,6 @@ use actix_cors::Cors;
 use client_connection::ClientConnectionManager;
 use lobby::LobbyManager;
 
-async fn manual_hello() -> impl Responder {
-  HttpResponse::Ok().body("Hey there!")
-}
-
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
   let lobby_manager_addr = LobbyManager::new().start();
@@ -34,7 +30,6 @@ async fn main() -> std::io::Result<()> {
       .app_data(web::Data::new(lobby_manager_addr.clone()))
       .app_data(web::Data::new(client_connection_manager_addr.clone()))
       .configure(api::config)
-      .route("/hey", web::get().to(manual_hello))
   })
   .bind(("127.0.0.1", 8080))?
   .run()
