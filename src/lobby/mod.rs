@@ -140,9 +140,13 @@ impl Handler<LobbyMessage> for Lobby {
           _ => ()
         }
 
-        // Send client connection message
-        let other_user = if is_user1 { self.user2_connection.clone() } else { self.user1_connection.clone() };
-        other_user.unwrap().do_send(ClientConnectionMessage::LobbyGameMove {
+        // Send game move messages
+        self.user1_connection.as_ref().unwrap().do_send(ClientConnectionMessage::LobbyGameMove {
+          piece_type: user_piece_type,
+          move_type: move_type.clone()
+        });
+
+        self.user2_connection.as_ref().unwrap().do_send(ClientConnectionMessage::LobbyGameMove {
           piece_type: user_piece_type,
           move_type: move_type.clone()
         });
