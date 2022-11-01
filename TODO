@@ -5,6 +5,10 @@ TODO:
   - sort of like treating asserts as docs or comments
 - Fix ClientConnectionMessage::LobbyGameMove
 
+Bugfixes:
+- Error handling for messages when state is not ready for them yet (don't want to crash the socket connection?)
+
+
 10/30/22:
 TODO:
 - Update lobby joined message to now include lobby state:
