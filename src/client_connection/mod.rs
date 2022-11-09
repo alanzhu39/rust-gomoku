@@ -1,7 +1,7 @@
 mod client_connection_manager;
 
 use crate::api::message::{ClientMessage, ClientConnectionMessage, LobbyMessage, LobbyManagerMessage};
-use crate::lobby::{Lobby, LobbyManager};
+use crate::lobby::{Lobby, LobbyManager, LobbyStatus};
 pub use client_connection_manager::{ClientConnectionManager, ClientConnectionId};
 
 use actix::*;
@@ -45,8 +45,15 @@ impl Handler<ClientConnectionMessage> for ClientConnection {
     let message_text = msg.to_string();
 
     match msg {
-      ClientConnectionMessage::LobbyStatus { lobby_addr: lobby_addr, .. } => {
-        self.lobby = Some(lobby_addr);
+      ClientConnectionMessage::LobbyStatus { lobby_addr: lobby_addr, lobby_status: lobby_status, .. } => {
+        match lobby_status {
+          LobbyStatus::Closed => {
+            self.lobby = None;
+          }
+          _ => {
+            self.lobby = Some(lobby_addr);
+          }
+        }
       },
       _ => ()
     }
@@ -90,6 +97,12 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for ClientConnection 
                 lobby.do_send(LobbyMessage::ClientGameMove { move_type: move_type, user_connection: ctx.address() });
               }
             },
+
+            ClientMessage::LeaveLobby => {
+              if let Some(lobby) = &self.lobby {
+                lobby.do_send(LobbyMessage::ClientLeaveLobby { user_connection: ctx.address() });
+              }
+            }
 
             _ => ()
           }

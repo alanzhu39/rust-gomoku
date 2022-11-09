@@ -5,14 +5,15 @@ use actix::*;
 pub use lobby_manager::{LobbyManager, LobbyId};
 use crate::game::{PieceType, GameState, Game};
 use crate::client_connection::ClientConnection;
-use crate::api::message::{ClientConnectionMessage, LobbyMessage};
+use crate::api::message::{ClientConnectionMessage, LobbyMessage, LobbyManagerMessage};
 
 #[derive(Debug)]
 pub enum LobbyStatus {
   OnePlayerWaiting,
   TwoPlayersWaiting,
   GameStarted,
-  GameFinished
+  GameFinished,
+  Closed
 }
 
 pub struct Lobby {
@@ -157,7 +158,33 @@ impl Handler<LobbyMessage> for Lobby {
       },
 
       LobbyMessage::ClientLeaveLobby { user_connection: user_connection } => {
-        // TODO
+        // check lobby status
+        if !matches!(self.lobby_status, LobbyStatus::GameFinished) {
+          eprintln!("Cannot start lobby with status {:?}!", self.lobby_status);
+          return;
+        }
+
+        // Start game
+        self.lobby_status = LobbyStatus::Closed;
+
+        // Send lobby started messsages
+        self.user1_connection.as_ref().unwrap().do_send(ClientConnectionMessage::LobbyStatus {
+          lobby_id: self.lobby_id.clone(),
+          lobby_status: LobbyStatus::Closed,
+          lobby_addr: ctx.address()
+        });
+        self.user2_connection.as_ref().unwrap().do_send(ClientConnectionMessage::LobbyStatus {
+          lobby_id: self.lobby_id.clone(),
+          lobby_status: LobbyStatus::Closed,
+          lobby_addr: ctx.address()
+        });
+
+        // Send lobby manager close message
+        self.lobby_manager.do_send(LobbyManagerMessage::CloseLobby {
+          lobby_id: self.lobby_id.clone()
+        });
+
+        ctx.stop();
       },
 
       LobbyMessage::ClientRematch => {

@@ -54,8 +54,9 @@ impl Handler<LobbyManagerMessage> for LobbyManager {
         }
       },
 
-      CloseLobby => {
-        // TODO
+      LobbyManagerMessage::CloseLobby { lobby_id } => {
+        // Close lobby
+        self.lobbies_map.remove(&lobby_id);
       }
     }
   }

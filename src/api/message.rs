@@ -11,6 +11,7 @@ pub enum ClientMessage {
   CreateLobby,
   JoinLobby { lobby_id: LobbyId },
   StartLobby,
+  LeaveLobby,
   PlayerMove { move_type: MoveType },
   Rematch
 }
@@ -39,6 +40,9 @@ impl ClientMessage {
       },
       "START_LOBBY" => {
         Ok(ClientMessage::StartLobby)
+      },
+      "LEAVE_LOBBY" => {
+        Ok(ClientMessage::LeaveLobby)
       },
       "PLAYER_MOVE" => {
         if let Ok(move_type) = Self::parse_player_move(args) {
@@ -122,7 +126,7 @@ impl fmt::Display for ClientConnectionMessage {
 pub enum LobbyManagerMessage {
   CreateLobby { user_connection: Addr<ClientConnection> },
   JoinLobby { lobby_id: LobbyId, user_connection: Addr<ClientConnection> },
-  CloseLobby
+  CloseLobby { lobby_id: LobbyId }
 }
 
 pub enum LobbyMessage {
