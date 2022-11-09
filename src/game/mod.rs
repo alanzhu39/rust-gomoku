@@ -38,17 +38,17 @@ impl Game {
     self.game_state = GameState::Win(piece_type);
   }
 
-  pub fn make_move(&mut self, piece_type: PieceType, move_type: MoveType) {
+  pub fn make_move(&mut self, piece_type: PieceType, move_type: MoveType) -> Result<(), ()> {
     if !matches!(self.game_state, GameState::InProgress) {
       eprintln!("Game is already over!");
-      return;
+      return Err(());
     }
 
     match move_type {
       MoveType::PlacePiece(x, y) => {
         if piece_type != self.current_turn {
           eprintln!("Must be current turn to place piece!");
-          return;
+          return Err(());
         }
 
         // Place piece
@@ -67,5 +67,6 @@ impl Game {
       },
       MoveType::Resign => self.set_game_win(piece_type.other())
     }
+    return Ok(())
   }
 }

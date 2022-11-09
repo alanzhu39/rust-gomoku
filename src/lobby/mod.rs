@@ -130,7 +130,7 @@ impl Handler<LobbyMessage> for Lobby {
           };
 
         // Call game method
-        game.make_move(user_piece_type, move_type.clone());
+        if let Err(_) = game.make_move(user_piece_type, move_type.clone()) { return };
 
         // Update lobby status
         match game.game_state {

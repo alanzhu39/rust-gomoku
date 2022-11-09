@@ -9,6 +9,12 @@ Bugfixes:
 - Error handling for messages when state is not ready for them yet (don't want to crash the socket connection?)
 
 
+11/8/22:
+In progress:
+- bugfixes
+
+
+
 10/30/22:
 TODO:
 - Update lobby joined message to now include lobby state:
