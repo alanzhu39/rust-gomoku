@@ -44,6 +44,9 @@ impl ClientMessage {
       "LEAVE_LOBBY" => {
         Ok(ClientMessage::LeaveLobby)
       },
+      "REMATCH" => {
+        Ok(ClientMessage::Rematch)
+      },
       "PLAYER_MOVE" => {
         if let Ok(move_type) = Self::parse_player_move(args) {
           Ok(ClientMessage::PlayerMove { move_type: move_type })

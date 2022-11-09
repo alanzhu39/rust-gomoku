@@ -177,7 +177,19 @@ impl Handler<LobbyMessage> for Lobby {
       },
 
       LobbyMessage::ClientRematch => {
-        // TODO
+        // check lobby status
+        if !matches!(self.lobby_status, LobbyStatus::GameFinished) {
+          eprintln!("Cannot restart lobby with status {:?}!", self.lobby_status);
+          return;
+        }
+
+        // Start game
+        self.game = Some(Game::new());
+        self.is_user1_black = !self.is_user1_black;
+        self.lobby_status = LobbyStatus::GameStarted;
+
+        // Send lobby started messsages
+        self.send_status_messages(ctx.address());
       }
     }
   }

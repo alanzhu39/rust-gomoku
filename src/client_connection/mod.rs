@@ -92,15 +92,21 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for ClientConnection 
               }
             },
 
-            ClientMessage::PlayerMove { move_type } => {
-              if let Some(lobby) = &self.lobby {
-                lobby.do_send(LobbyMessage::ClientGameMove { move_type: move_type, user_connection: ctx.address() });
-              }
-            },
-
             ClientMessage::LeaveLobby => {
               if let Some(lobby) = &self.lobby {
                 lobby.do_send(LobbyMessage::ClientLeaveLobby { user_connection: ctx.address() });
+              }
+            },
+
+            ClientMessage::Rematch => {
+              if let Some(lobby) = &self.lobby {
+                lobby.do_send(LobbyMessage::ClientRematch);
+              }
+            },
+
+            ClientMessage::PlayerMove { move_type } => {
+              if let Some(lobby) = &self.lobby {
+                lobby.do_send(LobbyMessage::ClientGameMove { move_type: move_type, user_connection: ctx.address() });
               }
             },
 
