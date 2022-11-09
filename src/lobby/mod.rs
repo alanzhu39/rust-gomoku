@@ -87,7 +87,7 @@ impl Handler<LobbyMessage> for Lobby {
         });
       },
 
-      LobbyMessage::ClientStartLobby { user_connection: user_connection } => {
+      LobbyMessage::ClientStartLobby { user_connection } => {
         // check lobby status
         if !matches!(self.lobby_status, LobbyStatus::TwoPlayersWaiting) {
           eprintln!("Cannot start lobby with status {:?}!", self.lobby_status);
@@ -117,7 +117,7 @@ impl Handler<LobbyMessage> for Lobby {
         });
       },
 
-      LobbyMessage::ClientGameMove { move_type: move_type, user_connection: user_connection } => {
+      LobbyMessage::ClientGameMove { move_type, user_connection } => {
         // verify lobby status
         if !matches!(self.lobby_status, LobbyStatus::GameStarted) {
           eprintln!("Cannot make game moves in lobby with status {:?}!", self.lobby_status);
@@ -157,7 +157,7 @@ impl Handler<LobbyMessage> for Lobby {
         });
       },
 
-      LobbyMessage::ClientLeaveLobby { user_connection: user_connection } => {
+      LobbyMessage::ClientLeaveLobby { user_connection } => {
         // check lobby status
         if !matches!(self.lobby_status, LobbyStatus::GameFinished) {
           eprintln!("Cannot start lobby with status {:?}!", self.lobby_status);

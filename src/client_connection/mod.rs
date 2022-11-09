@@ -45,7 +45,7 @@ impl Handler<ClientConnectionMessage> for ClientConnection {
     let message_text = msg.to_string();
 
     match msg {
-      ClientConnectionMessage::LobbyStatus { lobby_addr: lobby_addr, lobby_status: lobby_status, .. } => {
+      ClientConnectionMessage::LobbyStatus { lobby_addr, lobby_status, .. } => {
         match lobby_status {
           LobbyStatus::Closed => {
             self.lobby = None;
@@ -77,7 +77,7 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for ClientConnection 
               }
             },
             
-            ClientMessage::JoinLobby { lobby_id: lobby_id } => {
+            ClientMessage::JoinLobby { lobby_id } => {
               if let None = self.lobby {
                 self.lobby_manager.do_send(LobbyManagerMessage::JoinLobby {
                   lobby_id: lobby_id,
@@ -92,7 +92,7 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for ClientConnection 
               }
             },
 
-            ClientMessage::PlayerMove { move_type: move_type } => {
+            ClientMessage::PlayerMove { move_type } => {
               if let Some(lobby) = &self.lobby {
                 lobby.do_send(LobbyMessage::ClientGameMove { move_type: move_type, user_connection: ctx.address() });
               }
@@ -102,7 +102,7 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for ClientConnection 
               if let Some(lobby) = &self.lobby {
                 lobby.do_send(LobbyMessage::ClientLeaveLobby { user_connection: ctx.address() });
               }
-            }
+            },
 
             _ => ()
           }

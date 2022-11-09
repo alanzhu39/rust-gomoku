@@ -100,11 +100,11 @@ pub enum ClientConnectionMessage {
 impl fmt::Display for ClientConnectionMessage {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
     match self {
-      ClientConnectionMessage::LobbyStatus { lobby_id: lobby_id, lobby_status: lobby_status, .. } => {
+      ClientConnectionMessage::LobbyStatus { lobby_id, lobby_status, .. } => {
         write!(f, "LOBBY_STATUS::{}:{:?}", lobby_id.simple().encode_lower(&mut Uuid::encode_buffer()), lobby_status)
       },
 
-      ClientConnectionMessage::LobbyGameMove { piece_type: piece_type, move_type: move_type } => {
+      ClientConnectionMessage::LobbyGameMove { piece_type, move_type } => {
         let piece_str = if let PieceType::Black = piece_type { "BLACK" } else { "WHITE" };
 
         match move_type {

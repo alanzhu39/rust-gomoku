@@ -47,7 +47,7 @@ impl Handler<LobbyManagerMessage> for LobbyManager {
         });
       },
 
-      LobbyManagerMessage::JoinLobby { lobby_id: lobby_id, user_connection: user2_connection } => {
+      LobbyManagerMessage::JoinLobby { lobby_id, user_connection: user2_connection } => {
         // Send lobby join message
         if let Some(lobby_addr) = self.lobbies_map.get(&lobby_id) {
           lobby_addr.do_send(LobbyMessage::ClientJoinLobby { user_connection: user2_connection });
