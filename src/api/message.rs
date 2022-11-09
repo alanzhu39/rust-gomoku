@@ -89,20 +89,15 @@ pub enum ClientConnectionManagerMessage {
 }
 
 pub enum ClientConnectionMessage {
-  LobbyJoined { lobby_id: LobbyId, lobby_status: LobbyStatus, lobby_addr: Addr<Lobby> },
-  LobbyStarted { lobby_id: LobbyId },
+  LobbyStatus { lobby_id: LobbyId, lobby_status: LobbyStatus, lobby_addr: Addr<Lobby> },
   LobbyGameMove { piece_type: PieceType, move_type: MoveType }
 }
 
 impl fmt::Display for ClientConnectionMessage {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
     match self {
-      ClientConnectionMessage::LobbyJoined { lobby_id: lobby_id, lobby_status: lobby_status, .. } => {
-        write!(f, "LOBBY_JOINED::{}:{:?}", lobby_id.simple().encode_lower(&mut Uuid::encode_buffer()), lobby_status)
-      },
-
-      ClientConnectionMessage::LobbyStarted { lobby_id: lobby_id } => {
-        write!(f, "LOBBY_STARTED::{}", lobby_id.simple().encode_lower(&mut Uuid::encode_buffer()))
+      ClientConnectionMessage::LobbyStatus { lobby_id: lobby_id, lobby_status: lobby_status, .. } => {
+        write!(f, "LOBBY_STATUS::{}:{:?}", lobby_id.simple().encode_lower(&mut Uuid::encode_buffer()), lobby_status)
       },
 
       ClientConnectionMessage::LobbyGameMove { piece_type: piece_type, move_type: move_type } => {

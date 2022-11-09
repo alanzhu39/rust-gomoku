@@ -40,7 +40,7 @@ impl Handler<LobbyManagerMessage> for LobbyManager {
         self.lobbies_map.insert(lobby_id.clone(), lobby_addr.clone());
 
         // Send message to client connection
-        user1_connection.do_send(ClientConnectionMessage::LobbyJoined {
+        user1_connection.do_send(ClientConnectionMessage::LobbyStatus {
           lobby_id: lobby_id.clone(),
           lobby_status: LobbyStatus::OnePlayerWaiting,
           lobby_addr: lobby_addr

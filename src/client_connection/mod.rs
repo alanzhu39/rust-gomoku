@@ -45,7 +45,7 @@ impl Handler<ClientConnectionMessage> for ClientConnection {
     let message_text = msg.to_string();
 
     match msg {
-      ClientConnectionMessage::LobbyJoined { lobby_addr: lobby_addr, .. } => {
+      ClientConnectionMessage::LobbyStatus { lobby_addr: lobby_addr, .. } => {
         self.lobby = Some(lobby_addr);
       },
       _ => ()

@@ -73,13 +73,13 @@ impl Handler<LobbyMessage> for Lobby {
         self.lobby_status = LobbyStatus::TwoPlayersWaiting;
 
         // Send lobby joined messages
-        user2_connection.do_send(ClientConnectionMessage::LobbyJoined {
+        user2_connection.do_send(ClientConnectionMessage::LobbyStatus {
           lobby_id: self.lobby_id.clone(),
           lobby_status: LobbyStatus::TwoPlayersWaiting,
           lobby_addr: ctx.address()
         });
 
-        self.user1_connection.as_ref().unwrap().do_send(ClientConnectionMessage::LobbyJoined {
+        self.user1_connection.as_ref().unwrap().do_send(ClientConnectionMessage::LobbyStatus {
           lobby_id: self.lobby_id.clone(),
           lobby_status: LobbyStatus::TwoPlayersWaiting,
           lobby_addr: ctx.address()
@@ -104,11 +104,15 @@ impl Handler<LobbyMessage> for Lobby {
         self.lobby_status = LobbyStatus::GameStarted;
 
         // Send lobby started messsages
-        self.user1_connection.as_ref().unwrap().do_send(ClientConnectionMessage::LobbyStarted {
-          lobby_id: self.lobby_id.clone()
+        self.user1_connection.as_ref().unwrap().do_send(ClientConnectionMessage::LobbyStatus {
+          lobby_id: self.lobby_id.clone(),
+          lobby_status: LobbyStatus::GameStarted,
+          lobby_addr: ctx.address()
         });
-        self.user2_connection.as_ref().unwrap().do_send(ClientConnectionMessage::LobbyStarted {
-          lobby_id: self.lobby_id.clone()
+        self.user2_connection.as_ref().unwrap().do_send(ClientConnectionMessage::LobbyStatus {
+          lobby_id: self.lobby_id.clone(),
+          lobby_status: LobbyStatus::GameStarted,
+          lobby_addr: ctx.address()
         });
       },
 
