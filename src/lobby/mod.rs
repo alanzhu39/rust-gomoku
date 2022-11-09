@@ -7,7 +7,7 @@ use crate::game::{PieceType, GameState, Game};
 use crate::client_connection::ClientConnection;
 use crate::api::message::{ClientConnectionMessage, LobbyMessage, LobbyManagerMessage};
 
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug)]
 pub enum LobbyStatus {
   OnePlayerWaiting,
   TwoPlayersWaiting,
@@ -51,6 +51,20 @@ impl Lobby {
       lobby_manager: lobby_manager
     }
   }
+
+  fn send_status_messages(&self, lobby_addr: Addr<Lobby>) {
+    // Send lobby status messsages
+    self.user1_connection.as_ref().unwrap().do_send(ClientConnectionMessage::LobbyStatus {
+      lobby_id: self.lobby_id.clone(),
+      lobby_status: self.lobby_status,
+      lobby_addr: lobby_addr.clone()
+    });
+    self.user2_connection.as_ref().unwrap().do_send(ClientConnectionMessage::LobbyStatus {
+      lobby_id: self.lobby_id.clone(),
+      lobby_status: self.lobby_status,
+      lobby_addr: lobby_addr.clone()
+    });
+  }
 }
 
 impl Actor for Lobby {
@@ -74,17 +88,7 @@ impl Handler<LobbyMessage> for Lobby {
         self.lobby_status = LobbyStatus::TwoPlayersWaiting;
 
         // Send lobby joined messages
-        user2_connection.do_send(ClientConnectionMessage::LobbyStatus {
-          lobby_id: self.lobby_id.clone(),
-          lobby_status: LobbyStatus::TwoPlayersWaiting,
-          lobby_addr: ctx.address()
-        });
-
-        self.user1_connection.as_ref().unwrap().do_send(ClientConnectionMessage::LobbyStatus {
-          lobby_id: self.lobby_id.clone(),
-          lobby_status: LobbyStatus::TwoPlayersWaiting,
-          lobby_addr: ctx.address()
-        });
+        self.send_status_messages(ctx.address());
       },
 
       LobbyMessage::ClientStartLobby { user_connection } => {
@@ -105,16 +109,7 @@ impl Handler<LobbyMessage> for Lobby {
         self.lobby_status = LobbyStatus::GameStarted;
 
         // Send lobby started messsages
-        self.user1_connection.as_ref().unwrap().do_send(ClientConnectionMessage::LobbyStatus {
-          lobby_id: self.lobby_id.clone(),
-          lobby_status: LobbyStatus::GameStarted,
-          lobby_addr: ctx.address()
-        });
-        self.user2_connection.as_ref().unwrap().do_send(ClientConnectionMessage::LobbyStatus {
-          lobby_id: self.lobby_id.clone(),
-          lobby_status: LobbyStatus::GameStarted,
-          lobby_addr: ctx.address()
-        });
+        self.send_status_messages(ctx.address());
       },
 
       LobbyMessage::ClientGameMove { move_type, user_connection } => {
@@ -137,14 +132,6 @@ impl Handler<LobbyMessage> for Lobby {
         // Call game method
         if let Err(_) = game.make_move(user_piece_type, move_type.clone()) { return };
 
-        // Update lobby status
-        match game.game_state {
-          GameState::Win(_) | GameState::Draw => {
-            self.lobby_status = LobbyStatus::GameFinished;
-          },
-          _ => ()
-        }
-
         // Send game move messages
         self.user1_connection.as_ref().unwrap().do_send(ClientConnectionMessage::LobbyGameMove {
           piece_type: user_piece_type,
@@ -155,6 +142,17 @@ impl Handler<LobbyMessage> for Lobby {
           piece_type: user_piece_type,
           move_type: move_type.clone()
         });
+
+        // Update lobby status
+        match game.game_state {
+          GameState::Win(_) | GameState::Draw => {
+            self.lobby_status = LobbyStatus::GameFinished;
+
+            // Send lobby status messages
+            self.send_status_messages(ctx.address());
+          },
+          _ => ()
+        }
       },
 
       LobbyMessage::ClientLeaveLobby { user_connection } => {
@@ -167,17 +165,8 @@ impl Handler<LobbyMessage> for Lobby {
         // Start game
         self.lobby_status = LobbyStatus::Closed;
 
-        // Send lobby started messsages
-        self.user1_connection.as_ref().unwrap().do_send(ClientConnectionMessage::LobbyStatus {
-          lobby_id: self.lobby_id.clone(),
-          lobby_status: LobbyStatus::Closed,
-          lobby_addr: ctx.address()
-        });
-        self.user2_connection.as_ref().unwrap().do_send(ClientConnectionMessage::LobbyStatus {
-          lobby_id: self.lobby_id.clone(),
-          lobby_status: LobbyStatus::Closed,
-          lobby_addr: ctx.address()
-        });
+        // Send lobby status messsages
+        self.send_status_messages(ctx.address());
 
         // Send lobby manager close message
         self.lobby_manager.do_send(LobbyManagerMessage::CloseLobby {
