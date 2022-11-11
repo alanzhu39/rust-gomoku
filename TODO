@@ -6,8 +6,9 @@ TODO:
 - Fix ClientConnectionMessage::LobbyGameMove
 
 Bugfixes:
+- session token to open/close connections across user sessions
 - Error handling for messages when state is not ready for them yet (don't want to crash the socket connection?)
-
+- game moves sequence number? for ordering purposes
 
 11/8/22:
 In progress:
