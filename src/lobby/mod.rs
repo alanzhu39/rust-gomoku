@@ -87,7 +87,7 @@ impl Handler<LobbyMessage> for Lobby {
         } else if &old_connection == self.user2_connection.as_ref().unwrap() {
           self.user2_connection = Some(new_connection);
         } else {
-          return
+          return;
         }
 
         // Send lobby status message

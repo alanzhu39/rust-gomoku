@@ -34,10 +34,10 @@ impl Board {
     x * Board::SIZE_LIMIT + y
   }
 
-  pub fn place_piece(&mut self, x: usize, y: usize, piece_type: PieceType) {
+  pub fn place_piece(&mut self, x: usize, y: usize, piece_type: PieceType) -> Result<(), ()> {
     if x >= Board::SIZE_LIMIT || y >= Board::SIZE_LIMIT {
       eprintln!("Invalid piece coordinates!");
-      return;
+      return Err(());
     }
 
     let piece_code: u8 = match piece_type {
@@ -48,6 +48,7 @@ impl Board {
     let grid_index = Board::get_grid_index(x, y);
     if self.grid[grid_index] != 0 {
       eprintln!("Board is not empty at location ({}, {})", x, y);
+      return Err(());
     }
 
     self.grid[grid_index] = piece_code;
@@ -102,5 +103,6 @@ impl Board {
         break;
       }
     }
+    return Ok(());
   }
 }

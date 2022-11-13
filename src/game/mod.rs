@@ -52,7 +52,10 @@ impl Game {
         }
 
         // Place piece
-        self.board.place_piece(x, y, self.current_turn);
+        if let Err(_) = self.board.place_piece(x, y, self.current_turn) {
+          eprintln!("Error when placing piece");
+          return Err(());
+        }
 
         // Check win
         if self.board.has_five {
@@ -67,6 +70,6 @@ impl Game {
       },
       MoveType::Resign => self.set_game_win(piece_type.other())
     }
-    return Ok(())
+    return Ok(());
   }
 }
