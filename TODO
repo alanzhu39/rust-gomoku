@@ -4,6 +4,18 @@ Bugfixes:
 - game moves sequence number? for ordering purposes
 - make sure memory is being freed when lobbies/connections are closed
 
+11/13/22:
+In progress:
+- deployment:
+  - signed up for Azure student plan
+  - plan is: resource group, containing:
+    - virtual network
+    - azure container apps for backend container
+    - azure static web app for react fe
+  - need to containerize stuff
+
+
+
 11/12/22:
 In progress:
 
