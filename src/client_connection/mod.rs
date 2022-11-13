@@ -19,8 +19,11 @@ pub struct ClientConnection {
 }
 
 impl ClientConnection {
-  pub fn new(session_token: SessionToken, client_connection_manager: Addr<ClientConnectionManager>,
-      lobby_manager: Addr<LobbyManager>) -> ClientConnection {
+  pub fn new(
+    session_token: SessionToken,
+    client_connection_manager: Addr<ClientConnectionManager>,
+    lobby_manager: Addr<LobbyManager>
+  ) -> ClientConnection {
     ClientConnection {
       session_token: session_token,
       client_connection_manager: client_connection_manager,

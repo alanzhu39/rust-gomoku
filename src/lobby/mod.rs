@@ -27,8 +27,12 @@ pub struct Lobby {
 }
 
 impl Lobby {
-  pub fn new(lobby_id: LobbyId, user1_connection: Addr<ClientConnection>, is_user1_black: bool,
-      lobby_manager: Addr<LobbyManager>) -> Lobby {
+  pub fn new(
+    lobby_id: LobbyId,
+    user1_connection: Addr<ClientConnection>,
+    is_user1_black: bool,
+    lobby_manager: Addr<LobbyManager>
+  ) -> Lobby {
     Lobby {
       lobby_id: lobby_id,
       user1_connection: Some(user1_connection),
