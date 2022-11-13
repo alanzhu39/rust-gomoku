@@ -58,16 +58,20 @@ impl Lobby {
 
   fn send_status_messages(&self, lobby_addr: Addr<Lobby>) {
     // Send lobby status messsages
-    self.user1_connection.as_ref().unwrap().do_send(ClientConnectionMessage::LobbyStatus {
-      lobby_id: self.lobby_id.clone(),
-      lobby_status: self.lobby_status,
-      lobby_addr: lobby_addr.clone()
-    });
-    self.user2_connection.as_ref().unwrap().do_send(ClientConnectionMessage::LobbyStatus {
-      lobby_id: self.lobby_id.clone(),
-      lobby_status: self.lobby_status,
-      lobby_addr: lobby_addr.clone()
-    });
+    if self.user1_connection.is_some() {
+      self.user1_connection.as_ref().unwrap().do_send(ClientConnectionMessage::LobbyStatus {
+        lobby_id: self.lobby_id.clone(),
+        lobby_status: self.lobby_status,
+        lobby_addr: lobby_addr.clone()
+      });
+    }
+    if self.user2_connection.is_some() {
+      self.user2_connection.as_ref().unwrap().do_send(ClientConnectionMessage::LobbyStatus {
+        lobby_id: self.lobby_id.clone(),
+        lobby_status: self.lobby_status,
+        lobby_addr: lobby_addr.clone()
+      });
+    }
   }
 }
 
