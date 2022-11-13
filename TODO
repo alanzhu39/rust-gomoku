@@ -1,15 +1,14 @@
 TODO:
-- Assert should only be used to check logical validity of program
-  - for example, invariants, if an if condition guarantees something we can add an assertion in the last implicit certain condition
-  - should assume that asserts are never executed
-  - sort of like treating asserts as docs or comments
-- Fix ClientConnectionMessage::LobbyGameMove
-
 Bugfixes:
-- session token to open/close connections across user sessions
 - Error handling for messages when state is not ready for them yet (don't want to crash the socket connection?)
 - game moves sequence number? for ordering purposes
 - make sure memory is being freed when lobbies/connections are closed
+
+11/12/22:
+In progress:
+- session token to open/close connections across user sessions
+
+
 
 11/8/22:
 In progress:
@@ -42,6 +41,11 @@ Messaging protocol brainstorm:
   - Lobby/game will still have finished state in server
 - I think it's ok to not ack moves?
   - if client gets no ack then game is moot anyways?
+
+- Assert should only be used to check logical validity of program
+  - for example, invariants, if an if condition guarantees something we can add an assertion in the last implicit certain condition
+  - should assume that asserts are never executed
+  - sort of like treating asserts as docs or comments
 
 Finished:
 - Resign messages

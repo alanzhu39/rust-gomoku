@@ -1,3 +1,25 @@
+Session tokens:
+- need to update lobby fields on socket change
+- do we need the addresses in lobby?
+	- can have them in lobby manager? lobby sends lobby manager message, which sends to both players
+	- bottleneck at lobby manager
+- updating the existing fields:
+	- if a client connection is closed, client connection manager still has state of the old connection
+	- on new socket connection, client connection manager updates new connection fields as needed from old one
+		- eg. lobby address
+	- client connection manager sends message to lobby (update user connection)
+
+ClientConnectionManager:
+- map session tokens <> client connection address
+
+ClientConnection:
+- addr: lobby
+
+Lobby:
+- addr: user1 connection
+- addr: user2 connection
+
+
 Messages:
 ClientMessage: used by ClientConnection to model messages received from client
 ServerMessage: used by ClientConnection to model messages to be sent from server
