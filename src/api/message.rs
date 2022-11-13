@@ -91,11 +91,13 @@ impl ClientMessage {
 pub struct ParsingError;
 
 pub enum ClientConnectionManagerMessage {
-  AddClientConnection { session_token: SessionToken, client_connection_addr: Addr<ClientConnection> },
+  AddClientConnection { user_token: SessionToken, client_connection_addr: Addr<ClientConnection> },
+  LobbyClientConnection { session_token: SessionToken, lobby_addr: Option<Addr<Lobby>> },
   CloseClientConnection
 }
 
 pub enum ClientConnectionMessage {
+  SessionToken { session_token: SessionToken },
   LobbyStatus { lobby_id: LobbyId, lobby_status: LobbyStatus, lobby_addr: Addr<Lobby> },
   LobbyGameMove { piece_type: PieceType, move_type: MoveType }
 }
@@ -103,6 +105,10 @@ pub enum ClientConnectionMessage {
 impl fmt::Display for ClientConnectionMessage {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
     match self {
+      ClientConnectionMessage::SessionToken { session_token } => {
+        write!(f, "SESSION_TOKEN::{}", session_token.simple().encode_lower(&mut Uuid::encode_buffer()))
+      }
+
       ClientConnectionMessage::LobbyStatus { lobby_id, lobby_status, .. } => {
         write!(f, "LOBBY_STATUS::{}:{:?}", lobby_id.simple().encode_lower(&mut Uuid::encode_buffer()), lobby_status)
       },
@@ -133,6 +139,7 @@ pub enum LobbyManagerMessage {
 }
 
 pub enum LobbyMessage {
+  ClientUpdateConnection { old_connection: Addr<ClientConnection>, new_connection: Addr<ClientConnection> },
   ClientJoinLobby { user_connection: Addr<ClientConnection> },
   ClientStartLobby { user_connection: Addr<ClientConnection> },
   ClientGameMove { move_type: MoveType, user_connection: Addr<ClientConnection> },

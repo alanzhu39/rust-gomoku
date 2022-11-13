@@ -16,9 +16,12 @@ async fn create_client_connection(req: HttpRequest, stream: web::Payload) -> Res
   let client_connection_manager = req.app_data::<web::Data<Addr<ClientConnectionManager>>>().unwrap().get_ref().clone();
   let lobby_manager = req.app_data::<web::Data<Addr<LobbyManager>>>().unwrap().get_ref().clone();
 
-  // Generate session token
-  let session_token = Uuid::new_v4();
-  let client_connection = ClientConnection::new(session_token.clone(), client_connection_manager.clone(), lobby_manager);
+  // Handle session token
+  let mut session_token = Uuid::new_v4();
+  if let Ok(user_token) = Uuid::parse_str(req.query_string()) {
+    session_token = user_token;
+  }
+  let client_connection = ClientConnection::new(client_connection_manager.clone(), lobby_manager);
 
   // Start websocket
   let resp = ws::WsResponseBuilder::new(client_connection, &req, stream).start_with_addr();
@@ -28,7 +31,7 @@ async fn create_client_connection(req: HttpRequest, stream: web::Payload) -> Res
     Ok((client_connection_addr, http_response)) => {
       // TODO: error case on send
       client_connection_manager.do_send(ClientConnectionManagerMessage::AddClientConnection {
-        session_token: session_token,
+        user_token: session_token,
         client_connection_addr: client_connection_addr
       });
       // TODO: send session token

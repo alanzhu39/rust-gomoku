@@ -5,6 +5,9 @@ Session tokens:
 	- bottleneck at lobby manager
 - updating the existing fields:
 	- if a client connection is closed, client connection manager still has state of the old connection
+		- we can call stop on the connection actor
+		- actor will be stopped, but can still be accessed in client connection manager
+		- need to garbage collect maybe?
 	- on new socket connection, client connection manager updates new connection fields as needed from old one
 		- eg. lobby address
 	- client connection manager sends message to lobby (update user connection)

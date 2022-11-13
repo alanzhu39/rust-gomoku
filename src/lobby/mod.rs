@@ -80,6 +80,20 @@ impl Handler<LobbyMessage> for Lobby {
 
   fn handle(&mut self, msg: LobbyMessage, ctx: &mut Self::Context) -> Self::Result {
     match msg {
+      LobbyMessage::ClientUpdateConnection { old_connection, new_connection } => {
+        // Update user connection field
+        if &old_connection == self.user1_connection.as_ref().unwrap() {
+          self.user1_connection = Some(new_connection);
+        } else if &old_connection == self.user2_connection.as_ref().unwrap() {
+          self.user2_connection = Some(new_connection);
+        } else {
+          return
+        }
+
+        // Send lobby status message
+        self.send_status_messages(ctx.address());
+      }
+
       LobbyMessage::ClientJoinLobby { user_connection: user2_connection } => {
         // check lobby status
         if !matches!(self.lobby_status, LobbyStatus::OnePlayerWaiting) {

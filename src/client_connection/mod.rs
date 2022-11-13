@@ -1,15 +1,19 @@
 mod client_connection_manager;
 
-use crate::api::message::{ClientMessage, ClientConnectionMessage, LobbyMessage, LobbyManagerMessage};
+use crate::api::message::{
+  ClientMessage,
+  ClientConnectionMessage,
+  ClientConnectionManagerMessage,
+  LobbyMessage,
+  LobbyManagerMessage
+};
 use crate::lobby::{Lobby, LobbyManager, LobbyStatus};
-pub use client_connection_manager::{ClientConnectionManager, ClientConnectionId};
+pub use client_connection_manager::{ClientConnectionManager, SessionToken};
 
 use actix::*;
 use actix_web_actors::ws;
 
 use uuid::Uuid;
-
-pub type SessionToken = Uuid;
 
 pub struct ClientConnection {
   session_token: SessionToken,
@@ -20,20 +24,15 @@ pub struct ClientConnection {
 
 impl ClientConnection {
   pub fn new(
-    session_token: SessionToken,
     client_connection_manager: Addr<ClientConnectionManager>,
     lobby_manager: Addr<LobbyManager>
   ) -> ClientConnection {
     ClientConnection {
-      session_token: session_token,
+      session_token: Uuid::nil(),
       client_connection_manager: client_connection_manager,
       lobby_manager: lobby_manager,
       lobby: None
     }
-  }
-
-  fn hb(&self, ctx: &mut ws::WebsocketContext<Self>) {
-    // TODO: heartbeat
   }
 }
 
@@ -56,8 +55,15 @@ impl Handler<ClientConnectionMessage> for ClientConnection {
           _ => {
             self.lobby = Some(lobby_addr);
           }
-        }
+        };
+        self.client_connection_manager.do_send(ClientConnectionManagerMessage::LobbyClientConnection {
+          session_token: self.session_token,
+          lobby_addr: self.lobby.clone()
+        })
       },
+      ClientConnectionMessage::SessionToken { session_token } => {
+        self.session_token = session_token;
+      }
       _ => ()
     }
 
