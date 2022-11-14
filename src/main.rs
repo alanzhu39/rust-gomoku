@@ -22,7 +22,7 @@ async fn main() -> std::io::Result<()> {
     App::new()
       .wrap(
         Cors::default()
-          .allowed_origin("http://localhost:3000")
+          .send_wildcard()
           .allowed_methods(vec!["GET", "POST", "DELETE"])
           .allow_any_header()
           .max_age(3600)
@@ -31,7 +31,7 @@ async fn main() -> std::io::Result<()> {
       .app_data(web::Data::new(client_connection_manager_addr.clone()))
       .configure(api::config)
   })
-  .bind(("127.0.0.1", 8080))?
+  .bind(("0.0.0.0", 8080))?
   .run()
   .await
 }
