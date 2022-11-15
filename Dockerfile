@@ -5,4 +5,7 @@ RUN cargo install --path .
 
 FROM debian:buster-slim
 COPY --from=builder /usr/local/cargo/bin/rust-gomoku /usr/local/bin/rust-gomoku
+
+EXPOSE 8080
+
 CMD ["rust-gomoku"]
