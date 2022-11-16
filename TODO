@@ -4,6 +4,14 @@ Bugfixes:
 - game moves sequence number? for ordering purposes
 - make sure memory is being freed when lobbies/connections are closed
 
+11/15/22:
+In progress:
+- terraform + caddy for automatic https
+- support more leave lobby cases
+- update readme
+
+
+
 11/14/22:
 Finished:
 - first time deployment of FE and BE components
