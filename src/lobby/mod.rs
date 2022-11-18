@@ -13,6 +13,7 @@ pub enum LobbyStatus {
   TwoPlayersWaiting,
   GameStarted,
   GameFinished,
+  Abandoned,
   Closed
 }
 
@@ -179,23 +180,57 @@ impl Handler<LobbyMessage> for Lobby {
 
       LobbyMessage::ClientLeaveLobby { user_connection } => {
         // check lobby status
-        if !matches!(self.lobby_status, LobbyStatus::GameFinished) {
-          eprintln!("Cannot start lobby with status {:?}!", self.lobby_status);
-          return;
+        match self.lobby_status {
+          LobbyStatus::OnePlayerWaiting
+          | LobbyStatus::Abandoned => {
+            // Set status
+            self.lobby_status = LobbyStatus::Closed;
+
+            // Send lobby status messsages
+            self.send_status_messages(ctx.address());
+
+            // Send lobby manager close message
+            self.lobby_manager.do_send(LobbyManagerMessage::CloseLobby {
+              lobby_id: self.lobby_id.clone()
+            });
+
+            ctx.stop();
+          }
+
+          LobbyStatus::GameFinished
+          | LobbyStatus::TwoPlayersWaiting
+          | LobbyStatus::GameStarted => {
+            // Set status
+            self.lobby_status = LobbyStatus::Abandoned;
+
+            // Send lobby status messsages
+            self.send_status_messages(ctx.address());
+
+            // Send lobby status messsages
+            let is_user1 = user_connection.eq(self.user1_connection.as_ref().unwrap());
+            let other_connection = if is_user1 {
+              self.user2_connection.as_ref().unwrap()
+            } else {
+              self.user1_connection.as_ref().unwrap()
+            };
+
+            user_connection.do_send(ClientConnectionMessage::LobbyStatus {
+              lobby_id: self.lobby_id.clone(),
+              lobby_status: LobbyStatus::Closed,
+              lobby_addr: ctx.address()
+            });
+            other_connection.do_send(ClientConnectionMessage::LobbyStatus {
+              lobby_id: self.lobby_id.clone(),
+              lobby_status: self.lobby_status,
+              lobby_addr: ctx.address()
+            });
+          }
+
+          _ => {
+            eprintln!("Cannot leave lobby with status {:?}!", self.lobby_status);
+            return;
+          }
         }
-
-        // Start game
-        self.lobby_status = LobbyStatus::Closed;
-
-        // Send lobby status messsages
-        self.send_status_messages(ctx.address());
-
-        // Send lobby manager close message
-        self.lobby_manager.do_send(LobbyManagerMessage::CloseLobby {
-          lobby_id: self.lobby_id.clone()
-        });
-
-        ctx.stop();
       },
 
       LobbyMessage::ClientRematch => {
