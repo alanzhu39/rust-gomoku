@@ -1,18 +1,93 @@
-Objects:
+Session tokens:
+- need to update lobby fields on socket change
+- do we need the addresses in lobby?
+	- can have them in lobby manager? lobby sends lobby manager message, which sends to both players
+	- bottleneck at lobby manager
+- updating the existing fields:
+	- if a client connection is closed, client connection manager still has state of the old connection
+		- we can call stop on the connection actor
+		- actor will be stopped, but can still be accessed in client connection manager
+		- need to garbage collect maybe?
+	- on new socket connection, client connection manager updates new connection fields as needed from old one
+		- eg. lobby address
+	- client connection manager sends message to lobby (update user connection)
 
-Game
-field: id
-field: player1
-field: player2
-field: board
-field: moves sequence
-field: result
-- init:
-	blank fields
+ClientConnectionManager:
+- map session tokens <> client connection address
+
+ClientConnection:
+- addr: lobby
+
+Lobby:
+- addr: user1 connection
+- addr: user2 connection
+
+
+Messages:
+ClientMessage: used by ClientConnection to model messages received from client
+ServerMessage: used by ClientConnection to model messages to be sent from server
+Lobby
+
+API:
+POST ws::/connect
+	- optional session_token
+	- sends session_token back on connection
+
+Websocket server messages
+- Move made
+	- probably should include side
+- Game started
+- Game ended (result)
+- Rematch?
+
+Websocket client messages
+- Create lobby
+	- Choosing sides?
+	- Time control?
+- Join lobby
+- Start lobby
+- Make move
+	- should include side?
+- Forfeit
+- Rematch
+
+*Everything except initial connection will be via websocket
+	- will need some infrastructure around keeping socket alive (probably FE task?)
+
+
+ClientConnection: Websocket implementation for client connection
+ClientConnectionManager: actor for controlling to websocket events
+LobbyManager: actor for controlling lobby events
+
+
+Actor Model:
+- LobbyManager
+	- lobby ids map
+- ClientConnection
+	- Session token -> connection map
+	- session token -> lobby id map
+
+Client socket receives user message
+-> send to lobby manager actor
+-> perform lobby action
+-> send message to client socket actor
+-> send message to client
+
+
+Objects:
+Lobby
+field: user1_connection
+field: user2_connection
+field: is_user1_black
+field: game
+field: lobby_status
+- handles Users joining/creating game
+- handles Game creation
+- handles websockets
 - create:
-	assign player1
+	assign user1
 - join:
-	assign player2
+	assign user2
 	start game
 - start:
 	init board
@@ -23,16 +98,20 @@ field: result
 	place piece on board
 	update moves sequence
 	check win condition
-- private check win:
-	use last move
-	calc max conn in vert, hor, diag
-	update result if winner
+
+Game
+field: id
+field: user1
+field: user2
+field: board
+field: moves sequence
+field: result
+- init:
+	blank fields
 
 enum Move:
 Position {x, y}
 Forfeit
-
-
 
 GameResultEnum:
 WIN_BLACK
@@ -40,22 +119,20 @@ WIN_WHITE
 DRAW
 IN_PROGRESS
 
-
-
 Board
 field: id
 field: grid of pieces
 - init: blank board
 - place piece: update grid cell
+- private check win:
+	use last move
+	calc max conn in vert, hor, diag
+	update result if winner
 
-
-
-Player
+User
 field: id
 field: username
 field: password (if present)
-
-
 
 APIs:
 - create game (username)
@@ -67,8 +144,6 @@ APIs:
 	create player w/ username
 	join game
 	websocket connection
-
-
 
 Flows:
 - game creation
@@ -84,3 +159,26 @@ Flows:
 	send move via websocket
 	server pushes next move to both players (move, win, draw, etc.)
 
+Lobby:
+- Create lobby
+- Join lobby
+- Assign sides
+- Start game
+- Start rematch
+
+Features:
+- 2-player (link sharing)
+- 2-player (same computer)
+- 1-player (vs AI)
+- 1-player (analysis board)
+
+- timed games
+- display move order toggle
+- input modes (confirm move, instant move)
+- premoves
+- ghost mode (to inspect lines)
+- share a game
+- evaluation bar
+
+- user accounts
+- ELO system

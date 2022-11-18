@@ -1,0 +1,11 @@
+8/30/22
+- Adding more skeleton code
+  - Client connections, lobby management
+- Brainstorming actor model
+
+
+8/24/2022
+- Adding skeleton code
+  - api, database, game, users modules
+- More game, board module skeleton code
+- More lobby skeleton code

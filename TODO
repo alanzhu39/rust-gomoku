@@ -1,13 +1,200 @@
-- 2-player (link sharing)
-- 2-player (same computer)
-- 1-player (vs AI)
-- 1-player (analysis board)
+TODO:
+Bugfixes:
+- Error handling for messages when state is not ready for them yet (don't want to crash the socket connection?)
+- game moves sequence number? for ordering purposes
+- make sure memory is being freed when lobbies/connections are closed
 
-- timed games
-- display move order toggle
-- input modes (confirm move, instant move)
-- ghost mode (to inspect lines)
-- share a game
+11/17/22:
+In progress:
 
-- user accounts
+Finished:
+- update readme
+- support more leave lobby cases
 
+
+
+11/15/22:
+In progress:
+- terraform + caddy for automatic https
+- support more leave lobby cases
+- update readme
+
+
+
+11/14/22:
+Finished:
+- first time deployment of FE and BE components
+- Azure Container Instance for BE, with exposed public IP (may need to update CORS)
+- Azure App Service for FE, had to use app service instead of static web app in order to allow http requests
+
+
+
+11/13/22:
+- Test locally first!
+In progress:
+- deployment:
+  - signed up for Azure student plan
+  - plan is: resource group, containing:
+    - virtual network
+    - azure container apps for backend container
+    - azure static web app for react fe
+  - need to containerize stuff
+
+
+
+11/12/22:
+In progress:
+
+Finished:
+- session token to open/close connections across user sessions
+
+
+
+11/8/22:
+In progress:
+- bugfixes
+
+Finished:
+- catching more game errors
+- adding client leave lobby support
+
+
+
+10/30/22:
+TODO:
+- Update lobby joined message to now include lobby state:
+  - LOBBY_JOINED::<lobby_id>:<lobby_status>:<player1_id>:<player2_id>
+
+
+
+9/25/22:
+In progress:
+- FE architecture (API in working state)
+- Error messages: should probably include error messages so FE can handle different responses
+- Closing lobbies/connections
+- logging
+
+Messaging protocol brainstorm:
+- I think it's ok for invalid messages to just be ignored
+  - eg. out of turn piece moves, bad lobby create/join messages, etc.
+- I think we don't need to send lobby game finished message, just send moves and let clients figure out state
+  - Lobby/game will still have finished state in server
+- I think it's ok to not ack moves?
+  - if client gets no ack then game is moot anyways?
+
+- Assert should only be used to check logical validity of program
+  - for example, invariants, if an if condition guarantees something we can add an assertion in the last implicit certain condition
+  - should assume that asserts are never executed
+  - sort of like treating asserts as docs or comments
+
+Finished:
+- Resign messages
+- Lobby start message
+- Piece moves coming thru
+- messaging protocol
+  - game results
+  - error messages
+- FE testing:
+  - Need to maintain just one WS in state
+  - Lobby create works, lobby join works
+  - FE changes for sending messages
+
+
+
+9/22/22:
+In progress:
+- Lobby start messages
+- Game moves messages
+- Testing some flows
+  - FE changes for sending messages
+  - Lobby create works, lobby join works
+
+
+
+9/21/22:
+In progress:
+- Flows
+
+
+
+9/20/22:
+TODO:
+- Check todos
+- Check flows
+
+In progress:
+- lobby/lobby manager implementation
+- game implementation (supporting moves)
+- Testing
+  - Player 1 client connection
+  - Create lobby (message via ws)
+  - Player 2 client connection
+  - Join lobby
+  - Start lobby (player 1 message)
+  - Send moves
+
+
+
+9/19/22:
+In progress:
+- Create lobby API implementation in BE
+- Join/start lobby implementation in BE
+- Game implementation in BE
+
+Finished:
+- Basic client message parsing
+  - create/join/start lobby, player move
+
+
+
+9/18/22:
+In progress:
+- Finish client connection + create lobby API integration test
+  - Create lobby API implementation in BE
+
+Finished:
+- Create client connection API (GET ws::/connect)
+
+
+
+9/15/22:
+TODO:
+- Finish implementation for lobby, client messages
+  - Finish behavior
+- Finish game implementation
+- Initializing lobby manager, client connections manager, etc.
+
+In progress:
+
+Finished:
+- Messaging format skeleton
+
+
+
+9/14/22:
+In progress:
+- Messaging format
+- Initializing lobby manager, client connections manager
+- ws connect api
+- FE components brainstorming
+
+Finished:
+- Testing websocket connection
+  - Echo websocket on server side
+  - FE change to initialize websocket
+  - FE changes to interact with websocket
+- Echo websocket implementation working
+  - Need ws:// in websocket initialization
+
+
+
+9/10/22:
+In progress:
+- Testing websocket connection
+  - FE changes to call websocket endpoint
+
+
+- websocket connections
+- user + session tokens module
+  - mvp: support anonymous users
+- database integration
