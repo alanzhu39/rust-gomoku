@@ -4,6 +4,52 @@ Bugfixes:
 - game moves sequence number? for ordering purposes
 - make sure memory is being freed when lobbies/connections are closed
 
+
+4/30/2024:
+In progress:
+- get back up on playgomoku.net domain
+- improvements
+
+Pain points:
+- lobby IDs are ugly as just the long hashes
+  - can we do some kind of pneumonic? or some shorter id like not UUID
+- join mechanism is kinda slow?
+  - maybe add loading states? like a spinner when joining so we know what's going on
+  - maybe add like elipses animation when waiting for opponent to join lobby so it's not just sitting there
+- somehow landed in a lobby but couldn't exit it?
+- maybe get a cooler logo?
+- maybe some cute background art?
+- add some animations/sounds?
+  - maybe sounds on the buttons, or depth on the buttons so you can tell that you're clicking on them
+- lobby sharing link is kinda ugly maybe shrink the borders a little?
+- can we do ellipses at the end of the URL to signify that it's not ready
+- backend: closing connections when done?
+- trying to simplify the lobby architecture?
+- on closing the FE page it can send a leave lobby message?
+  - although we want to persist state across refresh...
+
+Current architecture:
+- client connection: class encapsulating a client connection
+  - implements websocket handling to pass messages to and from client
+  - maintains session token, and addresses of associated lobby, lobby manager, and client connections manager
+  - lobby is used so that we can send verified actions to the lobby... so that it can send across the other client connection?
+  - actually that seems pretty good actually lol. pretty intuitive if a bit circuitous
+- lobby:
+  - holds most of the game state, as well as the two client connection addresses
+- lobby manager:
+  - handles creation and updating of lobby objects (eg. adding players to a lobby when joining)
+  - also maintains a map of lobby IDs so that we know what lobby to join
+- client connection manager:
+  - keeps a map of session tokens to client connections, so that if a client accidentally disconnects, they can reestablish a socket connection and stay in the game pog
+  - also keeps a map of the lobby that each session is in, so that the new client connection can be created with the proper lobby info?
+
+User flow:
+- player creates lobby
+- opponent joins lobby
+- game start
+
+
+
 11/17/22:
 In progress:
 
