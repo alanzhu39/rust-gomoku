@@ -29,8 +29,8 @@ impl ClientConnection {
   ) -> ClientConnection {
     ClientConnection {
       session_token: Uuid::nil(),
-      client_connection_manager: client_connection_manager,
-      lobby_manager: lobby_manager,
+      client_connection_manager,
+      lobby_manager,
       lobby: None
     }
   }

@@ -4,7 +4,7 @@ use actix::Addr;
 use std::collections::HashMap;
 use uuid::Uuid;
 
-use crate::api::message::{ClientMessage, ClientConnectionMessage, ClientConnectionManagerMessage, LobbyMessage};
+use crate::api::message::{ClientConnectionMessage, ClientConnectionManagerMessage, LobbyMessage};
 use crate::lobby::Lobby;
 use super::ClientConnection;
 

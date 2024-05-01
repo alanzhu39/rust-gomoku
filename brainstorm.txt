@@ -1,3 +1,36 @@
+User accounts:
+User Model:
+- id
+- email
+- username
+- rating
+
+Game history:
+- id
+- time controls
+- timestamp
+- player 1 id
+- player 2 id
+- moves list
+- result
+
+Lobby:
+- game id
+
+
+
+Lobby settings:
+- Side selection
+- Time controls
+
+
+
+Game features:
+- Scrubbing through moves list
+- Right click for simulation
+
+
+
 Session tokens:
 - need to update lobby fields on socket change
 - do we need the addresses in lobby?

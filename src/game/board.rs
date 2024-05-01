@@ -60,8 +60,6 @@ impl Board {
       ((-1, -1), (1, 1)),
       ((-1, 1), (1, -1)),
     ];
-    let ix = x as isize;
-    let iy = y as isize;
 
     for (back, front) in directions {
       let mut counter = 1;

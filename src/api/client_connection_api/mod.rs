@@ -31,7 +31,7 @@ async fn create_client_connection(req: HttpRequest, stream: web::Payload) -> Res
     Ok((client_connection_addr, http_response)) => {
       client_connection_manager.do_send(ClientConnectionManagerMessage::AddClientConnection {
         user_token: session_token,
-        client_connection_addr: client_connection_addr
+        client_connection_addr
       });
       Ok(http_response)
     },
