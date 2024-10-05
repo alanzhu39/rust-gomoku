@@ -22,7 +22,7 @@
 <div align="center">
 <h3 align="center">Rust Gomoku</h3>
   <p align="center">
-    Backend service for PlayGomoku.net
+    Backend service for PlayGomoku
   </p>
 </div>
 
@@ -30,7 +30,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-Rust Gomoku provides the backend APIs for [PlayGomoku.net](https://www.playgomoku.net). Features implemented:
+Rust Gomoku provides the backend APIs for [PlayGomoku](https://gomoku.alanzhu39.com). Features implemented:
 - Websocket server: manages client connections and maintains socket connections across user sessions using session tokens
 - Lobby state: allows users to create and join lobbies, keeping server-side lobby state data
 - Game state: keeps track of game state and implements game logic to respond to player actions
@@ -43,6 +43,7 @@ Rust Gomoku provides the backend APIs for [PlayGomoku.net](https://www.playgomok
 [![Rust][rust-lang]][rust-url]
 [![Actix Web][actix-web]][actix-web-url]
 
+<!--
 ### Deployed with
 
 Build process with Terraform at the repository [gomoku-terraform](https://github.com/alanzhu39/gomoku-terraform).
@@ -50,6 +51,7 @@ Build process with Terraform at the repository [gomoku-terraform](https://github
 [![Docker][docker]][docker-url]
 [![Terraform][terraform]][terraform-url]
 [![Azure][Azure]][Azure-url]
+-->
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
