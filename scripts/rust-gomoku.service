@@ -1,0 +1,13 @@
+[Unit]
+Description=Rust Gomoku Service
+After=network.target
+
+[Service]
+User=pi
+WorkingDirectory=/home/pi/rust-gomoku
+ExecStart=/home/pi/rust-gomoku/scripts/run.sh
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+
