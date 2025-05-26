@@ -4,7 +4,7 @@ use actix::Addr;
 use std::collections::HashMap;
 use uuid::Uuid;
 
-use crate::api::message::{ClientMessage, ClientConnectionMessage, ClientConnectionManagerMessage, LobbyMessage};
+use crate::api::message::{ClientConnectionMessage, ClientConnectionManagerMessage, LobbyMessage};
 use crate::lobby::Lobby;
 use super::ClientConnection;
 
@@ -31,7 +31,7 @@ impl Actor for ClientConnectionManager {
 impl Handler<ClientConnectionManagerMessage> for ClientConnectionManager {
   type Result = ();
 
-  fn handle(&mut self, msg: ClientConnectionManagerMessage, ctx: &mut Self::Context) -> Self::Result {
+  fn handle(&mut self, msg: ClientConnectionManagerMessage, _ctx: &mut Self::Context) -> Self::Result {
     match msg {
       ClientConnectionManagerMessage::AddClientConnection { user_token, client_connection_addr } => {
         // Update client connections map
@@ -59,6 +59,8 @@ impl Handler<ClientConnectionManagerMessage> for ClientConnectionManager {
       ClientConnectionManagerMessage::LobbyClientConnection { session_token, lobby_addr } => {
         if let Some(lobby_addr) = lobby_addr {
           self.lobbies_map.insert(session_token, lobby_addr);
+        } else {
+          self.lobbies_map.remove(&session_token);
         }
       }
 
